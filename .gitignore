@@ -1,2 +1,3 @@
 *.sublime*
 app/node_modules
+*.css
