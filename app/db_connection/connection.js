@@ -40,10 +40,19 @@ function openConnection(connection)
 	});
 }
 
+/*
+ * Closes a connection. Call when you're done querying.
+ */
+
 function closeConnection(connection)
 {
 	connection.end();
 }
+
+/*
+ * Queries the database, returning all arrangements where "field" matches "value"
+ * and passing them to callback(error, rows).
+ */
 
 function getArrangement(connection, field, value, callback)
 {
