@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var pageSize = 50;
 
 var arrangementFields = [
     "id",
@@ -56,6 +57,31 @@ function closeConnection(connection)
 }
 
 /*
+ * Queries the database, returning pageSize arrangements from the given pageNum
+ * and passing them to callback(error, rows).
+ *
+ * @param connection	- a mysql connection object, must be open.
+ * @param callback		- a callback function(err, rows)
+ *		@param err 	- any error thrown during the mysql fetch
+ * 		@param rows - an array of row objects of the format fieldname:value
+ * @param pageNum		- int, which set of pageSize arrangements you want.
+ *
+ * NOTE: Page numbers are currently one-indexed. Jon, if you want them to be zero-indexed let me know.
+ */
+function getArrangementPage(connection, callback, pageNum)
+{
+	// It's null or zero or something
+	if(!pageNum)
+	{
+		pageNum = 1;
+	}
+	// The number of entries to skip before the first one we return
+	offset = pageSize*(pageNum-1)
+	sql = "SELECT * FROM arrangement LIMIT "+pageSize+" OFFSET "+offset+"";
+	connection.query(sql, callback);
+}
+
+/*
  * Queries the database, returning all arrangements where "field" matches "value"
  * and passing them to callback(error, rows).
  *
@@ -91,17 +117,10 @@ function searchArrangements(connection, field, value, callback)
 
 // TODO: Function that searches both name and nickname, specifically for song lookups by names
 
-// TODO: Finish this. This is what lets you iterate over database entries without loading all at once.
-function getArrangementIterator(connection)
-{
-	//return
-}
-
-
 // Just me testing things out.
 // connection = createConnection();
 // openConnection(connection);
-// searchArrangements(connection, function(err, cols)
+// getArrangementPage(connection, function(err, cols)
 // 	{
 // 		// console.log(cols);
 // 		var keys = [];
@@ -109,5 +128,5 @@ function getArrangementIterator(connection)
 // 		{
 // 			console.log(cols[k]);
 // 		}
-// 	});
+// 	}, 1);
 // closeConnection(connection);
