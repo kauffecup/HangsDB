@@ -92,7 +92,7 @@ function getArrangementPage(connection, callback, pageNum)
  *		@param err 	- any error thrown during the mysql fetch
  * 		@param rows - an array of row objects of the format fieldname:value
  */
-function getArrangements(connection, field, value, callback)
+function matchArrangements(connection, field, value, callback)
 {
 	sql = "SELECT * FROM arrangement WHERE "+field+" = '"+value+"'";
 	connection.query(sql, callback);
@@ -115,18 +115,49 @@ function searchArrangements(connection, field, value, callback)
 	connection.query(sql, callback);
 }
 
+function multiMatchArrangements(connection, fieldArray, valueArray, callback)
+{
+	if(fieldArray.length !== valueArray.length)
+	{
+		throw "array lengths must match"
+	}
+	if(fieldArray.length < 1)
+	{
+		throw "arrays must not be empty";
+	}
+
+	sql = "SELECT * FROM arrangement WHERE ";
+	for(i=0; i<fieldArray.length; i++)
+	{
+		if (valueArray[i] === "NULL")
+		{
+			sql = sql + fieldArray[i] + " IS NULL";
+		}
+		else
+		{
+			sql = sql + fieldArray[i] + " = '"+valueArray[i]+"'";
+		}
+
+		if(i != fieldArray.length-1)
+		{
+			sql = sql + " AND ";
+		}
+	}
+	connection.query(sql, callback);
+}
+
 // TODO: Function that searches both name and nickname, specifically for song lookups by names
 
 // Just me testing things out.
-// connection = createConnection();
-// openConnection(connection);
-// getArrangementPage(connection, function(err, cols)
-// 	{
-// 		// console.log(cols);
-// 		var keys = [];
-// 		for(var k in cols)
-// 		{
-// 			console.log(cols[k]);
-// 		}
-// 	}, 1);
-// closeConnection(connection);
+connection = createConnection();
+var fields = new Array("id", "pdf_url");
+var values = new Array(1, "NULL");
+openConnection(connection);
+multiMatchArrangements(connection, fields, values, function(err, rows)
+	{
+		for(i=0; i<rows.length; i++)
+		{
+			console.log(rows[i]);
+		}
+	}, 1);
+closeConnection(connection);
