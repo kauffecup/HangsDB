@@ -11,9 +11,11 @@
   }],
   "scripts": {
     "watch": "watchify client/main.js -o public/js/bundle.js",
+    "watchdebug": "watchify client/main.js -o public/js/bundle.js --debug",
     "browserify": "browserify client/main.js > public/js/bundle.js",
     "build": "npm run browserify",
-    "start": "npm run watch & forever start ./bin/www"
+    "start": "npm run watch & forever start ./bin/www",
+    "debug": "npm run watchdebug & forever start ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.8.1",
