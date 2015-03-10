@@ -71,10 +71,8 @@ module.exports = {
   getArrangementPage: function (connection, callback, pageNum)
   {
     // It's null or zero or something
-    if(!pageNum)
-    {
-      pageNum = 1;
-    }
+    pageNum = pageNum || 1;
+    
     // The number of entries to skip before the first one we return
     offset = pageSize*(pageNum-1)
     sql = "SELECT * FROM arrangement LIMIT "+pageSize+" OFFSET "+offset+"";

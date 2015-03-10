@@ -7,4 +7,17 @@ router.get('/', function(req, res) {
   res.render('index');
 });
 
+/* Test DB endpoint */
+var dbconnection = connection.createConnection();
+router.get('/arrangements', function(req, res) {
+  connection.getArrangementPage(dbconnection, function (err, rows) {
+    console.log(arguments);
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
 module.exports = router;
