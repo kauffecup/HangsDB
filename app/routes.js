@@ -11,7 +11,12 @@ router.get('/', function(req, res) {
 var dbconnection = connection.createConnection();
 router.get('/arrangements', function(req, res) {
   connection.getArrangementPage(dbconnection, function (err, rows) {
-    res.json(err || rows);
+    if (err) {
+      res.status(502);
+      res.json(err);
+    } else {
+      res.json(rows);
+    }
   });
 });
 
