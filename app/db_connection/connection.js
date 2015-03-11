@@ -145,18 +145,48 @@ module.exports = {
   }
 };
 
+function getArrangersForId(connection, id, callback)
+{
+	sql = "SELECT * FROM arrangement_arranger WHERE arrangement_id = "+id;
+	connection.query(sql, callback);
+}
+
+function getArtistsForId(connecion, id, callback)
+{
+	sql = "SELECT * FROM arrangement_artist WHERE arrangement_id = "+id;
+	connection.query(sql, callback);
+}
+
+function getConcertsForId(connecion, id, callback)
+{
+	sql = "SELECT * FROM arrangement_concert WHERE arrangement_id = "+id;
+	connection.query(sql, callback);
+}
+
+function getSoloistsForId(connecion, id, callback)
+{
+	sql = "SELECT * FROM arrangement_soloist WHERE arrangement_id = "+id;
+	connection.query(sql, callback);
+}
+
+function getNameForId(connecion, id, callback)
+{
+	sql = "SELECT name FROM arrangement WHERE id = "+id;
+	connection.query(sql, callback);
+}
 // TODO: Function that searches both name and nickname, specifically for song lookups by names
 
-// // Just me testing things out.
+
+// Just me testing things out.
 // connection = createConnection();
 // var fields = new Array("id", "pdf_url");
 // var values = new Array(1, "NULL");
 // openConnection(connection);
-// multiMatchArrangements(connection, fields, values, function(err, rows)
-//  {
-//    for(i=0; i<rows.length; i++)
-//    {
-//      console.log(rows[i]);
-//    }
-//  }, 1);
+// getNameFromId(connection, 1, function(err, rows)
+// 	{
+// 		for(i=0; i<rows.length; i++)
+// 		{
+// 			console.log(rows[i]['name']);
+// 		}
+// 	});
 // closeConnection(connection);
