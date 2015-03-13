@@ -37,13 +37,13 @@ var Sage = React.createClass({
     http.get('/arrangements', function (res) {
       var __this = _this;
       res.on('data', function (data) {
+        var songs;
         try {
-        __this.setState({
-          songs: JSON.parse(data)
-        });
+          songs = JSON.parse(data);
         } catch (e) {
-          // for now do nothing
+          songs = [];
         }
+        __this.setState({songs: songs});
       });
     });
   }
