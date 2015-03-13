@@ -30,6 +30,39 @@ module.exports = {
   },
 
   /**
+   * Opens a new connection automatically if this one fails.
+   * Should be called on all new connections to prevent timeout issues.
+   */
+  reopenConnectionOnDisconnect: function (connection)
+  {
+  	connection.on("error", function(err)
+  	{
+  		if(!err.fatal)
+  		{
+  			return;
+  		}
+  		if(err.code !== "PROTOCOL_CONNECTION_LOST")
+  		{
+  			throw err;
+  		}
+
+  		connection = this.createConnection();
+  		connection.connect(function(error)
+  			{
+  				if(error)
+  				{
+  					// This probably means the DB exploded.
+  					throw "CANNOT_REOPEN_CONNECTION"
+  				}
+  				else
+  				{
+  					this.replaceClientOnDisconnect(connection);
+  				}
+  			});
+  	});
+  }
+
+  /**
    * Opens a connection, allowing you to use it in querying the database
    */
   openConnection: function (connection)
@@ -175,18 +208,3 @@ function getNameForId(connecion, id, callback)
 	connection.query(sql, callback);
 }
 // TODO: Function that searches both name and nickname, specifically for song lookups by names
-
-
-// Just me testing things out.
-// connection = createConnection();
-// var fields = new Array("id", "pdf_url");
-// var values = new Array(1, "NULL");
-// openConnection(connection);
-// getNameFromId(connection, 1, function(err, rows)
-// 	{
-// 		for(i=0; i<rows.length; i++)
-// 		{
-// 			console.log(rows[i]['name']);
-// 		}
-// 	});
-// closeConnection(connection);
