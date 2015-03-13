@@ -60,7 +60,7 @@ module.exports = {
   				}
   			});
   	});
-  }
+  },
 
   /**
    * Opens a connection, allowing you to use it in querying the database
