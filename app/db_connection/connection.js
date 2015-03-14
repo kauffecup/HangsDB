@@ -62,9 +62,11 @@ module.exports = {
   	});
   },
 
-  addAllToArrangement: function (name, artist_id, original_song_year, arranged_semester_id, quality, reception, genre, arrangement_type_id, nickname, has_syllables, pdf_url, finale_url, youtube_url, pitch_blown, difficulty, has_choreo, solo_voice_part_id, notes, song_key, recording_url, active, number_of_parts, arranger_array, arrangement_concert, arrangement_soloist, arranger_director, arrangement_concert)
+  addAllToArrangement: function (name, artist_id, original_song_year, arranged_semester_id, quality, reception, genre, arrangement_type_id, nickname, has_syllables, pdf_url, finale_url, youtube_url, pitch_blown, difficulty, has_choreo, solo_voice_part_id, notes, song_key, recording_url, active, number_of_parts, arranger_array, semester_array, soloist_array, director_array, concert_array)
   {
-		// get ready for the mysql query of your life.
+  	// get ready for the mysql query of your life.
+  	//arranger_array, semester_array, soloist_array, director_array, concert_array
+  	//for(i=0; i<fieldArray.length; i++)
   },
 
   /**
