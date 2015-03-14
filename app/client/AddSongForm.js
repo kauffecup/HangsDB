@@ -11,6 +11,8 @@ var DropDown = React.createClass({
     var items = this.props.items.map(function (item) {
       return <option value={item.value || item}>{item.display || item}</option>;
     });
+    // put default value at start of array
+    items.unshift(<option value=''></option>);
     var value = (this.state && this.state.value) || '';
     return <select className='sage-drop-down' value={value} onChange={this.handleChange}>{items}</select>;
   }
@@ -62,20 +64,20 @@ module.exports = React.createClass({
       opb : '',
       year : '',
       genre : '',
-      arrType : 1,
-      soloRange : 1,
-      quality : 1,
-      hasSyllables : false,
-      isActive : false,
-      hasChoreo : false,
+      arrType : '',
+      soloRange : '',
+      quality : '',
+      hasSyllables : '',
+      isActive : '',
+      hasChoreo : '',
       numParts : '',
       arrangedby : '',
       arrangedSemester : '',
       soloists : '',
-      key: 0,
-      pitchBlown : 0,
-      difficulty : 1,
-      reception : 1,
+      key: '',
+      pitchBlown : '',
+      difficulty : '',
+      reception : '',
       mds : '',
       youtubeLink : '',
       concertsIn : '',
@@ -97,20 +99,20 @@ module.exports = React.createClass({
       opb : this.state.opb,
       year : this.state.originalYear,
       genre : this.state.genre,
-      arrType : this.state.arrType || 1,               // TODO: define default through getinitialstate
-      soloRange : this.state.soloRange || 1,           // TODO: define default through getinitialstate
-      quality : this.state.quality || 1,               // TODO: define default through getinitialstate
-      hasSyllables : this.state.hasSyllables || false, // TODO: define default through getinitialstate
-      isActive : this.state.isActive || false,         // TODO: define default through getinitialstate
-      hasChoreo : this.state.hasChoreo || false,       // TODO: define default through getinitialstate
+      arrType : this.state.arrType,
+      soloRange : this.state.soloRange,
+      quality : this.state.quality,
+      hasSyllables : this.state.hasSyllables,
+      isActive : this.state.isActive,
+      hasChoreo : this.state.hasChoreo,
       numParts : this.state.numParts,
       arrangedby : (this.state.arrangedby || '').split(',').map(function(str) {return str.trim()}),
       arrangedSemester : this.state.arrangedSemester,
       soloists : (this.state.soloists || '').split(',').map(function(str) {return str.trim()}),
-      key : this.state.key || 0,         // TODO: define default through getinitialstate
-      pitchBlown : this.state.pitchBlown || 0,         // TODO: define default through getinitialstate
-      difficulty : this.state.difficulty || 1,
-      reception : this.state.reception || 1,
+      key : this.state.key,
+      pitchBlown : this.state.pitchBlown,
+      difficulty : this.state.difficulty,
+      reception : this.state.reception,
       mds : (this.state.mds || '').split(',').map(function(str) {return str.trim()}),
       youtubeLink : this.state.youtubeLink,
       concertsIn : (this.state.concertsIn || '').split(',').map(function(str) {return str.trim()}),
@@ -188,13 +190,13 @@ module.exports = React.createClass({
             <Input propChange='arrangedSemester' placeholder='Fall 2013' changeFunc={this.updateFormState} />
 
             Type of Arrangement Scan:
-            <DropDown propChange='arrType' items={[{display:'Handwritten Original', value:1}, {display:'Electronic', value:2}, {display:'Copy of Handwritten',value:3}, {display:'Copy of Electronic',value:4}]} changeFunc={this.updateFormState} />
+            <DropDown propChange='arrType' items={[{display:'Handwritten', value:1}, {display:'Electronic', value:2}, {display:'Copy of Electronic',value:3}]} changeFunc={this.updateFormState} />
 
           </div>
 
           <div className='form-row'>
             Quality of scan:
-            <DropDown propChange='quality' items={[1,2,3,4,5,6,7,8,9,10]} changeFunc={this.updateFormState} />
+            <DropDown propChange='quality' items={[{display:'poor', value:1}, {display:'average', value:2}, {display:'good',value:3}]} changeFunc={this.updateFormState} />
 
             Has Syllables:
             <DropDown propChange='hasSyllables' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
@@ -267,7 +269,7 @@ module.exports = React.createClass({
             <DropDown propChange='hasChoreo' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
 
             Group Reception:
-            <DropDown propChange='reception' items={[1,2,3,4,5,6,7,8,9,10]} changeFunc={this.updateFormState} />
+            <DropDown propChange='reception' items={[{display:'hated it', value:1}, {display:'liked it', value:2}, {display:'loved it',value:3}]} changeFunc={this.updateFormState} />
           </div>
 
           <div className='form-row'>
