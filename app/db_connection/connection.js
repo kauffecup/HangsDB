@@ -62,6 +62,11 @@ module.exports = {
   	});
   },
 
+  addAllToArrangement: function (name, artist_id, original_song_year, arranged_semester_id, quality, reception, genre, arrangement_type_id, nickname, has_syllables, pdf_url, finale_url, youtube_url, pitch_blown, difficulty, has_choreo, solo_voice_part_id, notes, song_key, recording_url, active, number_of_parts, arranger_array, arrangement_concert, arrangement_soloist, arranger_director, arrangement_concert)
+  {
+		// get ready for the mysql query of your life.
+  },
+
   /**
    * Opens a connection, allowing you to use it in querying the database
    */
