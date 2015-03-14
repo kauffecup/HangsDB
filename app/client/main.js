@@ -38,10 +38,14 @@ var Sage = React.createClass({
     var _this = this;
     http.get('/arrangements', function (res) {
       var __this = _this;
+      var stringified = '';
       res.on('data', function (data) {
+        stringified += data;
+      });
+      res.on('end', function () {
         var songs;
         try {
-          songs = JSON.parse(data);
+          songs = JSON.parse(stringified);
         } catch (e) {
           songs = [];
         }
