@@ -199,7 +199,7 @@ module.exports = React.createClass({
             <DropDown propChange='quality' items={[{display:'poor', value:1}, {display:'average', value:2}, {display:'good',value:3}]} changeFunc={this.updateFormState} />
 
             Has Syllables:
-            <DropDown propChange='hasSyllables' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+            <DropDown propChange='hasSyllables' items={[{display:'no', value:'false'}, {display: 'yes', value:'true'}]} changeFunc={this.updateFormState} />
 
             Number of parts:
             <Input propChange='numParts' placeholder='4' changeFunc={this.updateFormState} />
@@ -263,10 +263,10 @@ module.exports = React.createClass({
 
           <div className='form-row'>
             Active:
-            <DropDown propChange='isActive' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+            <DropDown propChange='isActive' items={[{display:'no', value:'false'}, {display: 'yes', value:'true'}]} changeFunc={this.updateFormState} />
 
             Has Choreo:
-            <DropDown propChange='hasChoreo' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+            <DropDown propChange='hasChoreo' items={[{display:'no', value:'false'}, {display: 'yes', value:'true'}]} changeFunc={this.updateFormState} />
 
             Group Reception:
             <DropDown propChange='reception' items={[{display:'hated it', value:1}, {display:'liked it', value:2}, {display:'loved it',value:3}]} changeFunc={this.updateFormState} />
