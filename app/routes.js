@@ -36,7 +36,7 @@ router.post('/upload', function (req, res) {
           res.json(err);
         } else {
           res.status(200);
-          res.json({result});
+          res.json(result);
         }
       });
   } else {
