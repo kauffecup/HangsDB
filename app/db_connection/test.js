@@ -166,7 +166,7 @@ function addAllToArrangement (connection, name, artist_name, original_song_year,
     sql += active+", ";
     if(typeof has_syllables !== 'boolean')
     {
-    	has_choreo = "NULL";
+    	has_syllables = "NULL";
     }
     sql += has_syllables+", ";
     if(artist_name)

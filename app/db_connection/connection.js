@@ -214,7 +214,6 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
     	arrangement_type_id = "NULL";
     }
  	sql += arrangement_type_id+")";
-    console.log(sql);
 	connection.query(sql, function(err, result) {
 		if(err)
 		{
@@ -243,7 +242,6 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
 			    	});
 
 					sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"'))";
-					console.log(sql);
 	    			connection.query(sql, function(err, result) {
 			    		if(err)
 			    		{
