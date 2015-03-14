@@ -66,19 +66,27 @@ module.exports = {
   {
   	// get ready for the mysql query of your life.
   	// solo_voice_part_id and arrangement_type_id are going to be straight IDs.
-  	sql = "INSERT IGNORE INTO artist SET name = "+artist_name;
-    connection.query(sql, function() {
+  	sql = "INSERT IGNORE INTO artist SET name = '"+artist_name+"'";
+    connection.query(sql, function(err, rows) {
     	if(err)
     	{
-    		console.err("Error inserting artist: "+err.stack);
+    		console.log("Error inserting artist: "+err.stack);
+    	}
+    	else 
+    	{
+    		console.log("Inserted artist");
     	}
     });
 
-    sql = "INSERT IGNORE INTO semester SET name = "+arranged_semester_name;
-    connection.query(sql, function() {
+    sql = "INSERT IGNORE INTO semester SET name = '"+arranged_semester_name+"'";
+    connection.query(sql, function(err, rows) {
     	if(err)
     	{
-    		console.err("Error inserting semester: "+err.stack);
+    		console.log("Error inserting semester: "+err.stack);
+    	}
+    	else 
+    	{
+    		console.log("Inserted semester");
     	}
     });
 
