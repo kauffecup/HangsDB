@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-var pageSize = 50;
+var pageSize = 200;
 var arrangementFields = [
     "id",
     "name",
