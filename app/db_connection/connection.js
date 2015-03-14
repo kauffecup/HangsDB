@@ -120,6 +120,7 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
 		if(err)
 		{
 			console.log("Error inserting arrangement ");
+      console.error(err);
 		}
 		else
 		{
