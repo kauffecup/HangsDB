@@ -188,7 +188,7 @@ function addAllToArrangement (connection, name, artist_name, original_song_year,
 		if(err)
 		{
 			console.log("Error inserting arrangement ");
-      console.error(err);
+      console.error();
 		}
 		else
 		{
@@ -212,7 +212,7 @@ function addAllToArrangement (connection, name, artist_name, original_song_year,
 				    	}
 			    	});
 
-					sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"')";
+					sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"'))";
 					console.log(sql);
 	    			connection.query(sql, function(err, result) {
 			    		if(err)
