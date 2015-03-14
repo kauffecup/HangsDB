@@ -70,6 +70,7 @@ module.exports = React.createClass({
       hasChoreo : false,
       numParts : '',
       arrangedby : '',
+      arrangedSemester : '',
       soloists : '',
       key: 0,
       pitchBlown : 0,
@@ -104,6 +105,7 @@ module.exports = React.createClass({
       hasChoreo : this.state.hasChoreo || false,       // TODO: define default through getinitialstate
       numParts : this.state.numParts,
       arrangedby : (this.state.arrangedby || '').split(',').map(function(str) {return str.trim()}),
+      arrangedSemester : this.state.arrangedSemester,
       soloists : (this.state.soloists || '').split(',').map(function(str) {return str.trim()}),
       key : this.state.key || 0,         // TODO: define default through getinitialstate
       pitchBlown : this.state.pitchBlown || 0,         // TODO: define default through getinitialstate
@@ -191,6 +193,9 @@ module.exports = React.createClass({
 
           Arranged By (comma separated, BITCH):
           <Input propChange='arrangedby' changeFunc={this.updateFormState} />
+
+          Arranged (has to be in format "Spring 2009" or "Fall 1983"):
+          <Input propChange='arrangedSemester' changeFunc={this.updateFormState} />
         </div>
 
         <div className='form-section'>
