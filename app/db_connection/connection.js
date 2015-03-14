@@ -68,54 +68,151 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
 {
   	// get ready for the mysql query of your life.
   	// solo_voice_part_id and arrangement_type_id are going to be straight IDs.
-  	sql = "INSERT IGNORE INTO artist SET name = '"+artist_name+"'";
-    connection.query(sql, function(err, result) {
-    	if(err)
-    	{
-    		console.log("Error or duplicate inserting artist: "+err.stack);
-    	}
-    	else 
-    	{
-    		console.log("Inserted artist");
-    	}
-    });
-
-    sql = "INSERT IGNORE INTO semester SET name = '"+arranged_semester_name+"'";
-    connection.query(sql, function(err, result) {
-    	if(err)
-    	{
-    		console.log("Error or duplicate inserting semester: "+err.stack);
-    	}
-    	else 
-    	{
-    		console.log("Inserted semester");
-    	}
-    });
+  	if(artist_name)
+  	{
+	  	sql = "INSERT IGNORE INTO artist SET name = '"+artist_name+"'";
+	    connection.query(sql, function(err, result) {
+	    	if(err)
+	    	{
+	    		console.log("Error or duplicate inserting artist: "+err.stack);
+	    	}
+	    	else 
+	    	{
+	    		console.log("Inserted artist");
+	    	}
+	    });
+    }
+    if(arranged_semester_name)
+    {
+	    sql = "INSERT IGNORE INTO semester SET name = '"+arranged_semester_name+"'";
+	    connection.query(sql, function(err, result) {
+	    	if(err)
+	    	{
+	    		console.log("Error or duplicate inserting semester: "+err.stack);
+	    	}
+	    	else 
+	    	{
+	    		console.log("Inserted semester");
+	    	}
+	    });
+	}
 
     sql = "INSERT INTO arrangement (name, original_song_year, quality, genre, nickname, pdf_url, finale_url, youtube_url, arranged_semester_id, reception, notes, difficulty, recording_url, song_key, pitch_blown, number_of_parts, solo_voice_part_id, has_choreo, active, has_syllables, artist_id, arrangement_type_id) VALUES(";
+    if(!name)
+    {
+    	name = "NULL";
+    }
     sql += "'"+name+"', ";
+    if(typeof original_song_year !== 'number')
+    {
+    	original_song_year = "NULL";
+    }
     sql += original_song_year+", ";
-    sql += quality+", ";
-    sql += "'"+genre+"', ";
-    sql += "'"+nickname+"', ";
-    sql += "'"+pdf_url+"', ";
-    sql += "'"+finale_url+"', ";
+    if(typeof quality !== 'number')
+    {
+    	quality = "NULL";
+    }
+   	sql += quality+", ";
+	if(!genre)
+	{
+		genre = "NULL"
+	}
+	sql += "'"+genre+"', ";
+	if(!nickname)
+	{
+	    nickname = NULL
+	}
+	sql += "'"+nickname+"', ";
+	if(!pdf_url)
+	{	
+	    pdf_url = "NULL"
+	}
+	sql += "'"+pdf_url+"', ";
+	if(!finale_url)
+	{
+		finale_url = "NULL"
+    }
+    if(!youtube_url)
+   	{
+    	youtube_url = "NULL"
+    }
     sql += "'"+youtube_url+"', ";
-    sql += "(SELECT id FROM semester WHERE name = '"+arranged_semester_name+"'), ";
+    if(arranged_semester_name)
+    {
+    	sql += "(SELECT id FROM semester WHERE name = '"+arranged_semester_name+"'), ";
+    }
+    else
+    {
+    	sql += "NULL, ";
+    }
+    if(typeof reception !== 'number')
+    {
+    	reception = "NULL";
+    }
     sql += reception+", "
-    sql += "'"+notes+"', ";
+    if(!notes)
+    {
+    	notes = "NULL";
+	}
+	sql += "'"+notes+"', ";
+	if(typeof difficulty !== 'number')
+    {
+    	difficulty = "NULL";
+    }
     sql += difficulty+", ";
+    if(!recording_url)
+    {
+    	recording_url = "NULL";
+    }
     sql += "'"+recording_url+"', ";
+    if(typeof song_key_id !== 'number')
+    {
+    	song_key_id = "NULL";
+    }
     sql += song_key_id+", ";
+    if(typeof blown_pitch_id !== 'number')
+    {
+    	blown_pitch_id = "NULL";
+    }
     sql += blown_pitch_id+", ";
+    if(typeof number_of_parts !== 'number')
+    {
+    	number_of_parts = "NULL";
+    }
     sql += number_of_parts+", ";
+    if(typeof solo_voice_part_id !== 'number')
+    {
+    	solo_voice_part_id = "NULL";
+    }
     sql += solo_voice_part_id+", ";
+    if(typeof has_choreo !== 'boolean')
+    {
+    	has_choreo = "NULL";
+    }
     sql += has_choreo+", ";
+    if(typeof active !== 'boolean')
+    {
+    	active = "NULL";
+    }
     sql += active+", ";
+    if(typeof has_syllables !== 'boolean')
+    {
+    	has_choreo = "NULL";
+    }
     sql += has_syllables+", ";
- 	sql += "(SELECT id FROM artist WHERE name = '"+artist_name+"'), ";
+    if(artist_name)
+    {
+ 		sql += "(SELECT id FROM artist WHERE name = '"+artist_name+"'), ";
+ 	}
+ 	else
+ 	{
+ 		sql += "NULL, "
+ 	}
+ 	if(typeof arrangement_type_id !== 'number')
+    {
+    	arrangement_type_id = "NULL";
+    }
  	sql += arrangement_type_id+")";
-	console.log(sql);
 	connection.query(sql, function(err, result) {
 		if(err)
 		{
@@ -145,6 +242,7 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
 			    	});
 
 					sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"')";
+					console.log(sql);
 	    			connection.query(sql, function(err, result) {
 			    		if(err)
 			    		{
