@@ -212,6 +212,7 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
     {
     	arrangement_type_id = "NULL";
     }
+    console.log(sql);
  	sql += arrangement_type_id+")";
 	connection.query(sql, function(err, result) {
 		if(err)
