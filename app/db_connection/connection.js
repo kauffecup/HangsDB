@@ -132,6 +132,7 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
 	{
 		finale_url = "NULL"
     }
+    sql += "'"+finale_url+"', ";
     if(!youtube_url)
    	{
     	youtube_url = "NULL"
@@ -212,8 +213,8 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
     {
     	arrangement_type_id = "NULL";
     }
-    console.log(sql);
  	sql += arrangement_type_id+")";
+    console.log(sql);
 	connection.query(sql, function(err, result) {
 		if(err)
 		{
