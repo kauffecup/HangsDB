@@ -2,7 +2,8 @@
 var React = require('react'),
     http = require('http'),
 // then we load in our react modules
-    SongList = require('./SongList');
+    SongList = require('./SongList'),
+    AddSongForm = require('./AddSongForm');
 
 /**
  * A Sage Class.
@@ -24,6 +25,7 @@ var Sage = React.createClass({
               <h1>Sage</h1>
               <p>welcome to Sage.</p>
               <SongList songs={this.state.songs} />
+              <AddSongForm />
             </div>;
   },
 

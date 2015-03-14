@@ -1,5 +1,10 @@
+@primary-color1: #4285f4;
 @background-color: #ececec;
 @secondary-text-color: #999;
+
+* {
+  outline: none;
+}
 
 body {
   padding: 0;
@@ -31,6 +36,7 @@ body {
   margin: 0;
   padding: 0;
   list-style: none;
+  overflow: auto;
 
   // sorry google
   &::before {
@@ -49,5 +55,43 @@ body {
     cursor: pointer;
     padding: 10px;
     border-bottom: 1px solid @background-color;
+  }
+}
+
+.add-song-button {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: @primary-color1;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 25px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  line-height: 25px;
+  cursor: pointer;
+}
+
+.add-song-form {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 600px;
+  height: 500px;
+  background: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  margin: 0;
+  font-size: 12px;
+
+  .form-section {
+    padding: 10px 0px;
+  }
+
+  .form-section-header {
+    font-size: 16px;
   }
 }
