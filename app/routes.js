@@ -31,11 +31,11 @@ router.post('/upload', function (req, res) {
       '', '', body.youtubeLink, body.pitchBlown, body.difficulty, body.hasChoreo, body.soloRange,
       body.notes, body.key, '', body.isActive, body.numParts, body.arrangedby, body.semestersIn,
       body.soloists, body.mds, body.concertsIn, function (err, something) {
-        req.status(200);
+        res.status(200);
         res.json({});
       });
   } else {
-    req.status(400);
+    res.status(400);
     res.json({});
   }
 });
