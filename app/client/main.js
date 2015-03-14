@@ -46,6 +46,9 @@ var Sage = React.createClass({
         var songs;
         try {
           songs = JSON.parse(stringified);
+          // is this a reliable error condition?
+          if (songs.code)
+            songs = [];
         } catch (e) {
           songs = [];
         }

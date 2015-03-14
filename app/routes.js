@@ -30,9 +30,14 @@ router.post('/upload', function (req, res) {
       body.quality, body.reception, body.genre, body.arrType, body.nickname, body.hasSyllables,
       '', '', body.youtubeLink, body.pitchBlown, body.difficulty, body.hasChoreo, body.soloRange,
       body.notes, body.key, '', body.isActive, body.numParts, body.arrangedby, body.semestersIn,
-      body.soloists, body.mds, body.concertsIn, function (err, something) {
-        res.status(200);
-        res.json({});
+      body.soloists, body.mds, body.concertsIn, function (err, result) {
+        if (err) {
+          res.status(502);
+          res.json(err);
+        } else {
+          res.status(200);
+          res.json({result});
+        }
       });
   } else {
     res.status(400);
