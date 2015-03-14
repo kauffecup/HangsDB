@@ -23,7 +23,7 @@ var Input = React.createClass({
   },
   render: function() {
     var value = (this.state && this.state.value) || '';
-    return <input type="text" value={value} onChange={this.handleChange} />;
+    return <input type="text" placeholder={this.props.placeholder || ''} value={value} onChange={this.handleChange} />;
   }
 });
 
@@ -141,114 +141,144 @@ module.exports = React.createClass({
   render: function () {
     return this.state.opened ?
       <form className='add-song-form'>
-        <button type='button' className='close-form-button' onClick={this.closeForm}>x</button>
-        <div>shut up roshun i made this last night.</div>
+        <div className='header'>
+          <div>shut up roshun i made this last night.</div>
+          <button type='button' className='close-form-button sage-btn' onClick={this.closeForm}>x</button>
+        </div>
 
         <div className='form-section'>
           <div className='form-section-header'>About the song</div>
 
-          Name of Song:
-          <Input propChange='name' changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Name of Song:
+            <Input propChange='name' placeholder='You Got a "C"' changeFunc={this.updateFormState} />
 
-          Abbreviation:
-          <Input propChange='nickname' changeFunc={this.updateFormState} />
+            Abbreviation:
+            <Input propChange='nickname' placeholder='YGAC' changeFunc={this.updateFormState} />
+          </div>
 
-          Originally Performed By:
-          <Input propChange='opb' changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Originally Performed By:
+            <Input propChange='opb' placeholder='Matt Damon' changeFunc={this.updateFormState} />
 
-          Year:
-          <Input propChange='originalYear' changeFunc={this.updateFormState} />
+            Year:
+            <Input propChange='originalYear' placeholder='1983' changeFunc={this.updateFormState} />
+          </div>
 
-          Genre:
-          <Input propChange='genre' changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Genre:
+            <Input propChange='genre' placeholder='Country Sex' changeFunc={this.updateFormState} />
 
-          Solo Range:
-          <DropDown propChange='soloRange' items={[{display:'Tenor 1',value:1}, {display:'Tenor 2',value:2}, {display:'Baritone',value:3}, {display:'Bass',value:4}]} changeFunc={this.updateFormState}/>
+            Solo Range:
+            <DropDown propChange='soloRange' items={[{display:'Tenor 1',value:1}, {display:'Tenor 2',value:2}, {display:'Baritone',value:3}, {display:'Bass',value:4}]} changeFunc={this.updateFormState}/>
+          </div>
         </div>
 
         <div className='form-section'>
           <div className='form-section-header'>About the arrangement</div>
 
-          Quality of scan:
-          <DropDown propChange='quality' items={[1,2,3,4,5,6,7,8,9,10]} changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Arranged By (comma separated):
+            <Input propChange='arrangedby' placeholder='Adam Beckwith, Hasa Question' changeFunc={this.updateFormState} />
 
-          Has Syllables:
-          <DropDown propChange='hasSyllables' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+          </div>
 
-          Type of Arrangement Scan:
-          <DropDown propChange='arrType' items={[{display:'Handwritten Original', value:1}, {display:'Electronic', value:2}, {display:'Copy of Handwritten',value:3}, {display:'Copy of Electronic',value:4}]} changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Semester Arranged:
+            <Input propChange='arrangedSemester' placeholder='Fall 2013' changeFunc={this.updateFormState} />
 
-          Number of parts:
-          <Input propChange='numParts' changeFunc={this.updateFormState} />
+            Type of Arrangement Scan:
+            <DropDown propChange='arrType' items={[{display:'Handwritten Original', value:1}, {display:'Electronic', value:2}, {display:'Copy of Handwritten',value:3}, {display:'Copy of Electronic',value:4}]} changeFunc={this.updateFormState} />
 
-          Arranged By (comma separated, BITCH):
-          <Input propChange='arrangedby' changeFunc={this.updateFormState} />
+          </div>
 
-          Arranged (has to be in format "Spring 2009" or "Fall 1983"):
-          <Input propChange='arrangedSemester' changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Quality of scan:
+            <DropDown propChange='quality' items={[1,2,3,4,5,6,7,8,9,10]} changeFunc={this.updateFormState} />
+
+            Has Syllables:
+            <DropDown propChange='hasSyllables' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+
+            Number of parts:
+            <Input propChange='numParts' placeholder='4' changeFunc={this.updateFormState} />
+          </div>
+
+
         </div>
 
         <div className='form-section'>
           <div className='form-section-header'>About the performance</div>
 
-          Soloist(s) (separate by commas BITCH):
-          <Input propChange='soloists' changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Soloist(s) (comma):
+            <Input propChange='soloists' placeholder='Jonathan Kaufman, Jordan Toth' changeFunc={this.updateFormState} />
+          </div>
 
-          Active:
-          <DropDown propChange='isActive' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Concerts (comma):
+            <Input propChange='concertsIn' placeholder='Happy Hour XXI, Fall Tonic II' changeFunc={this.updateFormState} />
 
-          Key:
-          <DropDown propChange='key'
-            items={[{display:'C', value:0},
-              {display:'C#',  value: 1},
-              {display: 'D',  value: 2},
-              {display: 'Eb', value: 3},
-              {display: 'E',  value: 4},
-              {display: 'F',  value: 5},
-              {display: 'F#', value: 6},
-              {display: 'G',  value: 7},
-              {display: 'Ab', value: 8},
-              {display: 'A',  value: 9},
-              {display: 'Bb', value: 10},
-              {display: 'B',  value: 11}]}
-            changeFunc={this.updateFormState} />
+            Semesters (comma):
+            <Input propChange='semestersIn' placeholder="Spring 1888, Spring 1889, Fall 2015" changeFunc={this.updateFormState} />
+          </div>
 
-          Pitch Blown:
-          <DropDown propChange='pitchBlown'
-            items={[{display:'C', value:0},
-              {display:'C#',  value: 1},
-              {display: 'D',  value: 2},
-              {display: 'Eb', value: 3},
-              {display: 'E',  value: 4},
-              {display: 'F',  value: 5},
-              {display: 'F#', value: 6},
-              {display: 'G',  value: 7},
-              {display: 'Ab', value: 8},
-              {display: 'A',  value: 9},
-              {display: 'Bb', value: 10},
-              {display: 'B',  value: 11}]}
-            changeFunc={this.updateFormState} />
-          
-          Difficulty:
-          <DropDown propChange='difficulty' items={[{display: 'Easy', value: 1}, {display:'Medium',value:2}, {display:'Hard',value:3}]} changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Key:
+            <DropDown propChange='key'
+              items={[{display:'C', value:0},
+                {display:'C#',  value: 1},
+                {display: 'D',  value: 2},
+                {display: 'Eb', value: 3},
+                {display: 'E',  value: 4},
+                {display: 'F',  value: 5},
+                {display: 'F#', value: 6},
+                {display: 'G',  value: 7},
+                {display: 'Ab', value: 8},
+                {display: 'A',  value: 9},
+                {display: 'Bb', value: 10},
+                {display: 'B',  value: 11}]}
+              changeFunc={this.updateFormState} />
 
-          Has Choreo:
-          <DropDown propChange='hasChoreo' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
+            Pitch Blown:
+            <DropDown propChange='pitchBlown'
+              items={[{display:'C', value:0},
+                {display:'C#',  value: 1},
+                {display: 'D',  value: 2},
+                {display: 'Eb', value: 3},
+                {display: 'E',  value: 4},
+                {display: 'F',  value: 5},
+                {display: 'F#', value: 6},
+                {display: 'G',  value: 7},
+                {display: 'Ab', value: 8},
+                {display: 'A',  value: 9},
+                {display: 'Bb', value: 10},
+                {display: 'B',  value: 11}]}
+              changeFunc={this.updateFormState} />
 
-          Group Reception:
-          <DropDown propChange='reception' items={[1,2,3,4,5,6,7,8,9,10]} changeFunc={this.updateFormState} />
-          
-          MDs who have MDed this (comma separated with no AND - 'Jonathan Kaufman, Roshun Brestone')
-          <Input propChange='mds' changeFunc={this.updateFormState} />
+            Difficulty:
+            <DropDown propChange='difficulty' items={[{display: 'Easy', value: 1}, {display:'Medium',value:2}, {display:'Hard',value:3}]} changeFunc={this.updateFormState} />
+          </div>
 
-          Youtube link (empty if none):
-          <Input propChange='youtubeLink' changeFunc={this.updateFormState} />
+          <div className='form-row'>
+            Active:
+            <DropDown propChange='isActive' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
 
-          Performed in (comma separated with no and - 'Happy Hour XX, Fall Tonic XXX'):
-          <Input propChange='concertsIn' changeFunc={this.updateFormState} />
+            Has Choreo:
+            <DropDown propChange='hasChoreo' items={[{display:'no', value:false}, {display: 'yes', value:true}]} changeFunc={this.updateFormState} />
 
-          Semesters done (comma separated with no and - 'Spring 2009, Fall 2014'):
-          <Input propChange='semestersIn' changeFunc={this.updateFormState} />
+            Group Reception:
+            <DropDown propChange='reception' items={[1,2,3,4,5,6,7,8,9,10]} changeFunc={this.updateFormState} />
+          </div>
+
+          <div className='form-row'>
+            MDs who have MDed this:
+            <Input propChange='mds' placeholder="Sam Breslin, Christian Bale, Roshun Steppedinshit" changeFunc={this.updateFormState} />
+          </div>
+
+          <div className='form-row'>
+            Youtube link:
+            <Input propChange='youtubeLink' placeholder="https://www.youtube.com/watch?v=AdYaTa_lOf4" changeFunc={this.updateFormState} />
+          </div>
         </div>
 
         <div className='form-section'>
@@ -256,9 +286,9 @@ module.exports = React.createClass({
           <TextArea propChange='notes' changeFunc={this.updateFormState} />
         </div>
 
-        <button type='button' className='submit-song-button' onClick={this.onSubmit}>submit</button>
+        <button type='button' className='submit-song-button sage-btn' onClick={this.onSubmit}>submit</button>
       </form>
       :
-      <button className='add-song-button' onClick={this.openForm}>+</button>;
+      <button className='add-song-button sage-btn' onClick={this.openForm}>+</button>;
   }
 });
