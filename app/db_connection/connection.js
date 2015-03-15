@@ -66,8 +66,6 @@ module.exports = {
 //OTHERWISE MANY-TO-MANY TABLES WILL NOT BE UPDATED USING THE NEW ARRANGEMENT ID AS THE CALLBACK FUNCTION WILL NOT BE FINISHED.
 addAllToArrangement: function (connection, name, artist_name, original_song_year, arranged_semester_name, quality, reception, genre, arrangement_type_id, nickname, has_syllables, pdf_url, finale_url, youtube_url, blown_pitch_id, difficulty, has_choreo, solo_voice_part_id, notes, song_key_id, recording_url, active, number_of_parts, arranger_array, semester_array, soloist_array, director_array, concert_array, callback)
 {
-  	// get ready for the mysql query of your life.
-  	// solo_voice_part_id and arrangement_type_id are going to be straight IDs.
   	if(artist_name)
   	{
 	  	sql = "INSERT IGNORE INTO artist SET name = '"+artist_name+"'";
@@ -100,120 +98,121 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
     sql = "INSERT INTO arrangement (name, original_song_year, quality, genre, nickname, pdf_url, finale_url, youtube_url, arranged_semester_id, reception, notes, difficulty, recording_url, song_key, pitch_blown, number_of_parts, solo_voice_part_id, has_choreo, active, has_syllables, artist_id, arrangement_type_id) VALUES(";
     if(!name)
     {
-    	name = "NULL";
+    	name = null;
     }
-    sql += "'"+name+"', ";
+    sql += connection.escape(name)+", ";
     if(typeof original_song_year !== 'number')
     {
-    	original_song_year = "NULL";
+    	original_song_year = null;
     }
-    sql += original_song_year+", ";
+    sql += connection.escape(original_song_year)+", ";
     if(typeof quality !== 'number')
     {
-    	quality = "NULL";
+    	quality = null;
     }
-   	sql += quality+", ";
+   	sql += connection.escape(quality)+", ";
 	if(!genre)
 	{
-		genre = "NULL"
+		genre = null;
 	}
-	sql += "'"+genre+"', ";
+	sql += connection.escape(genre)+", ";
 	if(!nickname)
 	{
-	    nickname = NULL
+	    nickname = null;
 	}
-	sql += "'"+nickname+"', ";
+	sql += connection.escape(nickname)+", ";
 	if(!pdf_url)
 	{	
-	    pdf_url = "NULL"
+	    pdf_url = null;
 	}
-	sql += "'"+pdf_url+"', ";
+	sql += connection.escape(pdf_url)+", ";
 	if(!finale_url)
 	{
-		finale_url = "NULL"
+		finale_url = null;
     }
-    sql += "'"+finale_url+"', ";
+    sql += connection.escape(finale_url)+", ";
     if(!youtube_url)
    	{
-    	youtube_url = "NULL"
+    	youtube_url = null;
     }
-    sql += "'"+youtube_url+"', ";
+    sql += connection.escape(youtube_url)+", ";
     if(arranged_semester_name)
     {
-    	sql += "(SELECT id FROM semester WHERE name = '"+arranged_semester_name+"'), ";
+    	sql += "(SELECT id FROM semester WHERE name = "+connection.escape(arranged_semester_name)+"), ";
     }
     else
     {
-    	sql += "NULL, ";
+    	sql += connection.escape(null)+", ";
     }
     if(typeof reception !== 'number')
     {
-    	reception = "NULL";
+    	reception = null;
     }
-    sql += reception+", "
+    sql += connection.escape(reception)+", ";
     if(!notes)
     {
-    	notes = "NULL";
+    	notes = null;
 	}
-	sql += "'"+notes+"', ";
+	sql += connection.escape(notes)+", ";
 	if(typeof difficulty !== 'number')
     {
-    	difficulty = "NULL";
+    	difficulty = null;
     }
-    sql += difficulty+", ";
+    sql += connection.escape(difficulty)+", ";
     if(!recording_url)
     {
-    	recording_url = "NULL";
+    	recording_url = null;
     }
-    sql += "'"+recording_url+"', ";
+    sql += connection.escape(recording_url)+", ";
     if(typeof song_key_id !== 'number')
     {
-    	song_key_id = "NULL";
+    	song_key_id = null;
     }
-    sql += song_key_id+", ";
+    sql += connection.escape(song_key_id)+", ";
     if(typeof blown_pitch_id !== 'number')
     {
-    	blown_pitch_id = "NULL";
+    	blown_pitch_id = null;
     }
-    sql += blown_pitch_id+", ";
+    sql += connection.escape(blown_pitch_id)+", ";
     if(typeof number_of_parts !== 'number')
     {
-    	number_of_parts = "NULL";
+    	number_of_parts = null;
     }
     sql += number_of_parts+", ";
     if(typeof solo_voice_part_id !== 'number')
     {
-    	solo_voice_part_id = "NULL";
+    	solo_voice_part_id = null;
     }
-    sql += solo_voice_part_id+", ";
+    sql += connection.escape(solo_voice_part_id)+", ";
     if(typeof has_choreo !== 'boolean')
     {
-    	has_choreo = "NULL";
+    	has_choreo = null;
     }
-    sql += has_choreo+", ";
+    sql += connection.escape(has_choreo)+", ";
     if(typeof active !== 'boolean')
     {
-    	active = "NULL";
+    	active = null;
     }
-    sql += active+", ";
+    sql += connection.escape(active)+", ";
     if(typeof has_syllables !== 'boolean')
     {
-    	has_syllables = "NULL";
+    	has_syllables = null;
     }
-    sql += has_syllables+", ";
+    sql += connection.escape(has_syllables)+", ";
     if(artist_name)
     {
  		sql += "(SELECT id FROM artist WHERE name = '"+artist_name+"'), ";
  	}
  	else
  	{
- 		sql += "NULL, "
+    	sql += connection.escape(null)+", ";
  	}
  	if(typeof arrangement_type_id !== 'number')
     {
-    	arrangement_type_id = "NULL";
+    	arrangement_type_id = null;
     }
- 	sql += arrangement_type_id+")";
+ 	sql += connection.escape(arrangement_type_id)+")";
+
 	connection.query(sql, function(err, result) {
 		if(err)
 		{
@@ -242,6 +241,7 @@ addAllToArrangement: function (connection, name, artist_name, original_song_year
 			    	});
 
 					sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"'))";
+					console.log(sql);
 	    			connection.query(sql, function(err, result) {
 			    		if(err)
 			    		{
