@@ -2,7 +2,7 @@ var mysql = require('mysql');
 function createConnection()
 {
     connection = mysql.createConnection({
-            host : 'localhost',
+            host : '104.131.180.221',
             user : 'root',
             password : '',
             database : 'Sage'
@@ -359,7 +359,7 @@ function addAllToArrangement (connection, name, artist_name, original_song_year,
   // Just me testing things out.
 connection = createConnection();
 openConnection(connection);
-addAllToArrangement(connection, "dummy's name","dummy artist",1901,"Fall 1902",10,1,"dummy genre",1,"","","","","","","","",1,"dummy notes",1,"f/dum",true,4,["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"], function(){
-	console.log("Here");
-});
+//addAllToArrangement(connection, "dummy's name","dummy artist",1901,"Fall 1902",10,1,"dummy genre",1,"","","","","","","","",1,"dummy notes",1,"f/dum",true,4,["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"], function(){
+//	console.log("Here");
+//});
 
