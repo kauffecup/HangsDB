@@ -1,6 +1,6 @@
 // first we load in the node modules
 var React = require('react'),
-    http = require('http'),
+    requester = require('./requester'),
 // then we load in our react modules
     SongList = require('./SongList'),
     AddSongForm = require('./AddSongForm');
@@ -34,27 +34,9 @@ var Sage = React.createClass({
    * the state of the app.
    */
   componentDidMount: function () {
-    // TODO: need a much much much better way to keep scope
-    var _this = this;
-    http.get('/arrangements', function (res) {
-      var __this = _this;
-      var stringified = '';
-      res.on('data', function (data) {
-        stringified += data;
-      });
-      res.on('end', function () {
-        var songs;
-        try {
-          songs = JSON.parse(stringified);
-          // is this a reliable error condition?
-          if (songs.code)
-            songs = [];
-        } catch (e) {
-          songs = [];
-        }
-        __this.setState({songs: songs});
-      });
-    });
+    requester.loadInitialSongs().then(function (songs) {
+      this.setState({songs: songs});
+    }.bind(this));
   }
 });
 

@@ -1,6 +1,5 @@
 var React = require('react'),
-    http = require('http'),
-    querystring = require('querystring');
+    requester = require('./requester');
 
 var DropDown = React.createClass({
   handleChange: function (event) {
@@ -93,7 +92,7 @@ module.exports = React.createClass({
   },
 
   onSubmit: function () {
-    var postData = querystring.stringify({
+    requester.uploadSong({
       name : this.state.name,
       nickname : this.state.nickname,
       opb : this.state.opb,
@@ -118,26 +117,11 @@ module.exports = React.createClass({
       concertsIn : (this.state.concertsIn || '').split(',').map(function(str) {return str.trim()}),
       semestersIn : (this.state.semestersIn || '').split(',').map(function(str) {return str.trim()}),
       notes : this.state.notes
+    }).then(function (something) {
+      this.closeForm();
+    }).otherwise(function (somethingElse) {
+      // TODO need to display a message or something
     });
-
-    // TODO this really needs to not be in the onsubmit code
-    var options = {
-      path: '/upload',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': postData.length
-      }
-    };
-    var req = http.request(options, function (res) {});
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message);
-    });
-    // write data to request body
-    req.write(postData);
-    req.end();
-
-    this.closeForm();
   },
 
   render: function () {
