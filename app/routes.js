@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var connection = require('./db_connection/connection');
+var express = require('express'),
+    router = express.Router(),
+    connection = require('./db_connection/connection'),
+    arrangement = require('./db_connection/arrangement');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -10,7 +11,7 @@ router.get('/', function(req, res) {
 /* Test DB endpoint */
 var dbconnection = connection.createConnection();
 router.get('/arrangements', function(req, res) {
-  connection.getArrangementPage(dbconnection, function (err, rows) {
+  arrangement.getPage(dbconnection, 1, function (err, rows) {
     if (err) {
       res.status(502);
       res.json(err);
@@ -35,7 +36,7 @@ router.post('/upload', function (req, res) {
 
   var body = req && req.body;
   if (body) {
-    connection.addAllToArrangement(
+    arrangement.insertForAllFields(
       dbconnection,
       body.name,
       body.opb,

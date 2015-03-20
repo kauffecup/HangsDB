@@ -117,9 +117,9 @@ module.exports = React.createClass({
       concertsIn : (this.state.concertsIn || '').split(',').map(function(str) {return str.trim()}),
       semestersIn : (this.state.semestersIn || '').split(',').map(function(str) {return str.trim()}),
       notes : this.state.notes
-    }).then(function (something) {
+    }).bind(this).then(function (something) {
       this.closeForm();
-    }).otherwise(function (somethingElse) {
+    }).catch(function (e) {
       // TODO need to display a message or something
     });
   },
