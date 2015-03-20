@@ -60,12 +60,13 @@ router.post('/upload', function (req, res) {
       '',  // song URL, blank for now
       stringToBoolean(body.isActive),
       body.numParts,
-      // these have to be passed in as arrays, not as strings
-      [].concat(body.arrangedby),
-      [].concat(body.semestersIn),
-      [].concat(body.soloists),
-      [].concat(body.mds),
-      [].concat(body.concertsIn),
+      // these have to be passed in as arrays, not as strings. if undefined,
+      // send an empty string, not an array of an empty string
+      body.arrangedby && [].concat(body.arrangedby),
+      body.semestersIn && [].concat(body.semestersIn),
+      body.soloists && [].concat(body.soloists),
+      body.mds && [].concat(body.mds),
+      body.concertsIn && [].concat(body.concertsIn),
       function (err, result) {
         if (err) {
           res.status(502);
