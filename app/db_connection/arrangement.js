@@ -379,42 +379,82 @@ module.exports = {
 	},
 
 	/*
-	* Queries the database, returning all arrangements where id matches "id"
+	* Queries the database, returning all hangovers who arranged the arrangement with id "id"
 	* and passing them to callback(error, rows).
 	*
 	* @param connection	- a mysql connection object, must be open.
-	* @param id			- the value to match.
-	* @param callback 		- a callback function(err, rows)
+	* @param id			- the arrangement id to match.
+	* @param callback 	- a callback function(err, rows)
 	*    @param err  - any error thrown during the mysql fetch
-	*    @param rows - a length 1 array of row objects of the format fieldname:value
+	*    @param rows - an array of hangover name and id objects of the format fieldname:value
 	*/
 	getArrangersForId: function (connection, id, callback)
 	{
-		sql = "SELECT * FROM arrangement_arranger WHERE arrangement_id = "+id;
+		sql = "SELECT b.* FROM arrangement_arranger a, hangover b WHERE a.hangover_id = b.id AND a.arrangement_id = "+id;
 		connection.query(sql, callback);
 	},
 
-	getArtistsForId: function (connecion, id, callback)
-	{
-		sql = "SELECT * FROM arrangement_artist WHERE arrangement_id = "+id;
-		connection.query(sql, callback);
-	},
-
+	/*
+	* Queries the database, returning all concerts where we performed the arrangement with id "id"
+	* and passing them to callback(error, rows).
+	*
+	* @param connection	- a mysql connection object, must be open.
+	* @param id			- the arrangement id to match.
+	* @param callback 	- a callback function(err, rows)
+	*    @param err  - any error thrown during the mysql fetch
+	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*/
 	getConcertsForId: function (connecion, id, callback)
 	{
-		sql = "SELECT * FROM arrangement_concert WHERE arrangement_id = "+id;
+		sql = "SELECT b.* FROM arrangement_concert a, concert b WHERE a.concert_id = b.id AND a.arrangement_id = "+id;
 		connection.query(sql, callback);
 	},
 
+	/*
+	* Queries the database, returning all hangovers who directed the arrangement with id "id"
+	* and passing them to callback(error, rows).
+	*
+	* @param connection	- a mysql connection object, must be open.
+	* @param id			- the arrangement id to match.
+	* @param callback 	- a callback function(err, rows)
+	*    @param err  - any error thrown during the mysql fetch
+	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*/
+	getDirectorsForId: function (connecion, id, callback)
+	{
+		sql = "SELECT b.* FROM arrangement_director a, hangover b WHERE a.hangover_id = b.id AND a.arrangement_id = "+id;
+		connection.query(sql, callback);
+	},
+
+	/*
+	* Queries the database, returning all hangovers who soloed the arrangement with id "id"
+	* and passing them to callback(error, rows).
+	*
+	* @param connection	- a mysql connection object, must be open.
+	* @param id			- the arrangement id to match.
+	* @param callback 	- a callback function(err, rows)
+	*    @param err  - any error thrown during the mysql fetch
+	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*/
 	getSoloistsForId: function (connecion, id, callback)
 	{
-		sql = "SELECT * FROM arrangement_soloist WHERE arrangement_id = "+id;
+		sql = "SELECT b.* FROM arrangement_soloist a, hangover b WHERE a.hangover_id = b.id AND a.arrangement_id = "+id;
 		connection.query(sql, callback);
 	},
 
-	getNameForId: function (connecion, id, callback)
+	/*
+	* Queries the database, returning all semesters when we performed the arrangement with id "id"
+	* and passing them to callback(error, rows).
+	*
+	* @param connection	- a mysql connection object, must be open.
+	* @param id			- the arrangement id to match.
+	* @param callback 	- a callback function(err, rows)
+	*    @param err  - any error thrown during the mysql fetch
+	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*/
+	getSemestersForId: function (connecion, id, callback)
 	{
-		sql = "SELECT name FROM arrangement WHERE id = "+id;
+		sql = "SELECT b.* FROM arrangement_semester a, semester b WHERE a.semester_id = b.id AND a.arrangement_id = "+id;
 		connection.query(sql, callback);
 	},
 
