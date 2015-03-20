@@ -166,31 +166,32 @@ module.exports = {
 					for(i=0; i<arranger_array.length; i++)
 					{
 						arranger_name = arranger_array[i];
+						if(arranger_name)
+						{
+							sql = "INSERT IGNORE INTO hangover SET name = '"+arranger_name+"'";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting arranger: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted arranger");
+								}
+							});
 
-						sql = "INSERT IGNORE INTO hangover SET name = '"+arranger_name+"'";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting arranger: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted arranger");
-							}
-						});
-
-						sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"'))";
-						console.log(sql);
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting arranger junction: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted arranger junction");
-							}
-						});
+							sql = "INSERT IGNORE INTO arrangement_arranger (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+arranger_name+"'))";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting arranger junction: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted arranger junction");
+								}
+							});
+						}
 					}
 				}
 				if(semester_array)
@@ -198,30 +199,33 @@ module.exports = {
 					for(i=0; i<semester_array.length; i++)
 					{
 						semester_name = semester_array[i];
+						if(semester_name)
+						{
 
-						sql = "INSERT IGNORE INTO semester SET name = '"+semester_name+"'";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting semester: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted semester");
-							}
-						});
+							sql = "INSERT IGNORE INTO semester SET name = '"+semester_name+"'";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting semester: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted semester");
+								}
+							});
 
-						sql = "INSERT IGNORE INTO arrangement_semester (arrangement_id, semester_id) VALUES("+newArrangementId+", (SELECT id FROM semester WHERE name = '"+semester_name+"'))";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting semester junction: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted semester junction");
-							}
-						});
+							sql = "INSERT IGNORE INTO arrangement_semester (arrangement_id, semester_id) VALUES("+newArrangementId+", (SELECT id FROM semester WHERE name = '"+semester_name+"'))";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting semester junction: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted semester junction");
+								}
+							});
+						}
 					}
 				}
 				if(soloist_array)
@@ -229,31 +233,32 @@ module.exports = {
 					for(i=0; i<soloist_array.length; i++)
 					{
 						soloist_name = soloist_array[i];
+						if(soloist_name)
+						{
+							sql = "INSERT IGNORE INTO hangover SET name = '"+soloist_name+"'";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting soloist: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted soloist");
+								}
+							});
 
-						sql = "INSERT IGNORE INTO hangover SET name = '"+soloist_name+"'";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting soloist: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted soloist");
-							}
-						});
-
-						sql = "INSERT IGNORE INTO arrangement_soloist (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+soloist_name+"'))";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting soloist junction: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted soloist junction");
-							}
-						});
-
+							sql = "INSERT IGNORE INTO arrangement_soloist (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+soloist_name+"'))";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting soloist junction: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted soloist junction");
+								}
+							});
+						}
 					}
 				}
 				if(director_array)
@@ -261,30 +266,32 @@ module.exports = {
 					for(i=0; i<director_array.length; i++)
 					{
 						director_name = director_array[i];
+						if(director_name)
+						{
+							sql = "INSERT IGNORE INTO hangover SET name = '"+director_name+"'";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting director: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted director");
+								}
+							});
 
-						sql = "INSERT IGNORE INTO hangover SET name = '"+director_name+"'";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting director: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted director");
-							}
-						});
-
-						sql = "INSERT IGNORE INTO arrangement_director (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+director_name+"'))";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting director junction: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted director junction");
-							}
-						});
+							sql = "INSERT IGNORE INTO arrangement_director (arrangement_id, hangover_id) VALUES("+newArrangementId+", (SELECT id FROM hangover WHERE name = '"+director_name+"'))";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting director junction: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted director junction");
+								}
+							});
+						}
 					}
 				}
 				if(concert_array)
@@ -292,30 +299,32 @@ module.exports = {
 					for(i=0; i<concert_array.length; i++)
 					{
 						concert_name = concert_array[i];
+						if(concert_name)
+						{
+							sql = "INSERT IGNORE INTO concert SET name = '"+concert_name+"'";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting concert: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted concert");
+								}
+							});
 
-						sql = "INSERT IGNORE INTO concert SET name = '"+concert_name+"'";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting concert: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted concert");
-							}
-						});
-
-						sql = "INSERT IGNORE INTO arrangement_concert (arrangement_id, concert_id) VALUES("+newArrangementId+", (SELECT id FROM concert WHERE name = '"+concert_name+"'))";
-						connection.query(sql, function(err, result) {
-							if(err)
-							{
-								console.log("Error or duplicate inserting concert junction: "+err.stack);
-							}
-							else 
-							{
-								console.log("Inserted concert junction");
-							}
-						});
+							sql = "INSERT IGNORE INTO arrangement_concert (arrangement_id, concert_id) VALUES("+newArrangementId+", (SELECT id FROM concert WHERE name = '"+concert_name+"'))";
+							connection.query(sql, function(err, result) {
+								if(err)
+								{
+									console.log("Error or duplicate inserting concert junction: "+err.stack);
+								}
+								else
+								{
+									console.log("Inserted concert junction");
+								}
+							});
+						}
 					}
 				}
 			}
