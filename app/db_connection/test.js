@@ -4,14 +4,19 @@ var arrangement = require('./arrangement');
 dbconnection = connection.createConnection();
 connection.openConnection(dbconnection);
 
-arrangement.getForId(dbconnection, 1, function(err, val)
-{
-	console.log(val);
+// arrangement.getForId(dbconnection, 1, function(err, val)
+// {
+// 	console.log(val);
+//});
+
+arrangement.insertForAllFields(dbconnection, "junction_test","dummy artist",1901,"Fall 1902",10,1,"dummy genre",1,"","","","","","","","",1,"dummy notes",1,"f/dum",true,4,"","","","","", function(){
+	console.log("Here");
 });
 
 connection.closeConnection(dbconnection);
 
-//addAllToArrangement(connection, "dummy's name","dummy artist",1901,"Fall 1902",10,1,"dummy genre",1,"","","","","","","","",1,"dummy notes",1,"f/dum",true,4,["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"],["Warren Lowell","Jordan Toth", "H. Michael Newman"], function(){
-//	console.log("Here");
-//});
-
+// arranged_semester_id
+// blown_pitch_id (s)
+// song_key_id (s)
+// artist_id (s)
+// arrangement_type_id (s)

@@ -8,7 +8,7 @@ module.exports = {
 	{
 		if(artist_name)
 		{
-			sql = "INSERT IGNORE INTO artist SET name = '"+artist_name+"'";
+			sql = "INSERT IGNORE INTO artist SET name = "+connection.escape(artist_name);
 			connection.query(sql, function(err, result) {
 				if(err)
 				{
@@ -418,7 +418,7 @@ module.exports = {
 	* @param id			- the arrangement id to match.
 	* @param callback 	- a callback function(err, rows)
 	*    @param err  - any error thrown during the mysql fetch
-	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*    @param rows - an array of hangover objects of the format fieldname:value
 	*/
 	getDirectorsForId: function (connecion, id, callback)
 	{
@@ -434,7 +434,7 @@ module.exports = {
 	* @param id			- the arrangement id to match.
 	* @param callback 	- a callback function(err, rows)
 	*    @param err  - any error thrown during the mysql fetch
-	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*    @param rows - an array of hangover objects of the format fieldname:value
 	*/
 	getSoloistsForId: function (connecion, id, callback)
 	{
@@ -450,7 +450,7 @@ module.exports = {
 	* @param id			- the arrangement id to match.
 	* @param callback 	- a callback function(err, rows)
 	*    @param err  - any error thrown during the mysql fetch
-	*    @param rows - an array of concert name and id objects of the format fieldname:value
+	*    @param rows - an array of semester objects of the format fieldname:value
 	*/
 	getSemestersForId: function (connecion, id, callback)
 	{
