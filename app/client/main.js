@@ -38,7 +38,7 @@ var Sage = React.createClass({
    * off the inital song load.
    */
   componentDidMount: function () {
-    songController.registerCallback(this._onSongsUpdate.bind(this));
+    songController.registerCallback(this._onSongsUpdate);
     songController.loadInitialSongs();
   }
 });

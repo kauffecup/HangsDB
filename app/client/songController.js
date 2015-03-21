@@ -15,8 +15,14 @@ module.exports = {
    */
   loadInitialSongs: function () {
     requester.loadInitialSongs().bind(this).then(function (songs) {
+      // add a 'key' prop for better React performance
+      songs.forEach(function (song) {
+        song['key'] = song.id;
+      });
       this._songs = songs;
       this.updateCallbacks();
+    }, function (e) {
+      // TODO: error handling
     });
   },
 
@@ -48,6 +54,10 @@ module.exports = {
     return this.loadSong(song);
   },
 
+  /**
+   * Close the currently open song. Because we only support one being open 
+   * at a time, this does not take any arguments.
+   */
   closeSong: function () {
     if (this._openSong) {
       this._openSong.open = false;
@@ -65,7 +75,7 @@ module.exports = {
       }
       this.updateCallbacks();
     }, function (e) {
-
+      // TODO: error handling
     });
   }
 }

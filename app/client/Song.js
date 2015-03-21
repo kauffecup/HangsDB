@@ -1,8 +1,12 @@
 var React = require('react'),
     songController = require('./songController');
 
+/**
+ * A single valued row to be shown when a song is "open"
+ * @prop attr - the attribute that this row represents
+ * @prop value - the value that this row represents
+ */
 var SingleValuedRow = React.createClass({
-  // TODO handle case when value is empty
   render: function () {
     if (this.props.value) {
       return <div className="song-row">
@@ -16,6 +20,11 @@ var SingleValuedRow = React.createClass({
   }
 });
 
+/**
+ * A Multi valued row to be shown when a song is "open"
+ * @prop attr - the attribute that this row represents
+ * @prop values - an array of values to be wrapped in their own spans
+ */
 var MultiValuedRow = React.createClass({
   render: function () {
     var value;
@@ -28,6 +37,10 @@ var MultiValuedRow = React.createClass({
   }
 });
 
+/**
+ * Private helper method to convert a binary 0/1 (can be undefined)
+ * mysql value to a 'yes' or 'no' string
+ */
 function binaryToYesNo (thing) {
   if (typeof thing === 'number')
     return thing ? 'yes' : 'no';
@@ -37,7 +50,9 @@ function binaryToYesNo (thing) {
 
 /**
  * A Song.
- * For now, only display the song's name.
+ * For now, only display the song's name and year.
+ * When clicked, a song is "open" and will display everything we know about it
+ * @prop song - this song view controller's associated song model
  */
 module.exports = React.createClass({
   onClick: function () {
@@ -46,6 +61,10 @@ module.exports = React.createClass({
     }
   },
 
+  /**
+   * Render as a single row if the song is closed.
+   * If it is open, display all the information about this song
+   */
   render: function () {
     var song = this.props.song,
         isOpen = song.open,
@@ -62,7 +81,6 @@ module.exports = React.createClass({
     } else {
       // TODO: artist once we have more than just artist id
       // TODO: get arranged semester info from arrangement_semester_id, arrangement_type_id
-      // 
       interior =
         <div className='song-stuffs'>
           <div className='song-header'>
