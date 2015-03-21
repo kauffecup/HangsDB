@@ -1,16 +1,79 @@
+// NODE modules
 var express = require('express'),
     router = express.Router(),
+    Promise = require('bluebird'),
+// DB modules
     connection = require('./db_connection/connection'),
     arrangement = require('./db_connection/arrangement');
+
+// TODO: we're never closing this... so uh... when do we do that
+var dbconnection = connection.createConnection();
+
+// Helper methods for loadsong. let's define them up here, shall we!
+function loadBlankForId (id, funcName) {
+    return new Promise(function (resolve, reject) {
+      arrangement[funcName](dbconnection, id, function (err, rows) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+/**
+ * Load a songs row
+ */
+function loadSongRow (id) {
+  return loadBlankForId(id, 'getForId');
+}
+
+/**
+ * Load a songs arrangers
+ */
+function loadArrangers (id) {
+  return loadBlankForId(id, 'getArrangersForId');
+}
+
+/**
+ * Load a songs directors
+ */
+function loadDirectors (id) {
+  return loadBlankForId(id, 'getDirectorsForId');
+}
+
+/**
+ * Load a songs arrangers
+ */
+function loadConcerts (id) {
+  return loadBlankForId(id, 'getConcertsForId');
+}
+
+/**
+ * Load a songs soloists
+ */
+function loadSoloists (id) {
+  return loadBlankForId(id, 'getSoloistsForId');
+}
+
+/**
+ * Load a songs semesters
+ */
+function loadSemesters (id) {
+  return loadBlankForId(id, 'getSemestersForId');
+}
 
 /* GET home page. */
 router.get('/', function(req, res) {
   res.render('index');
 });
 
-/* Test DB endpoint */
-var dbconnection = connection.createConnection();
-router.get('/arrangements', function(req, res) {
+/**
+ * Load the first page of arrangements.
+ * TODO: maybe pass in the page num as an argument and default to 1?
+ */
+router.get('/arrangements', function (req, res) {
   arrangement.getPage(dbconnection, 1, function (err, rows) {
     if (err) {
       res.status(502);
@@ -19,6 +82,30 @@ router.get('/arrangements', function(req, res) {
       res.json(rows);
     }
   });
+});
+
+/**
+ * Endpoint for loading all of a songs info. Resolve the request with
+ * a song JSON object.
+ */
+router.get('/loadsong', function (req, res) {
+  var id = req.query && req.query.id;
+  if (id) {
+    Promise.join(loadSongRow(id), loadArrangers(id), loadDirectors(id), loadConcerts(id), loadSoloists(id), loadSemesters(id),
+      function (song, arrangers, directors, concerts, soloists, semesters) {
+        song = song[0];
+        song['arrangers'] = arrangers;
+        song['directors'] = directors;
+        song['concerts'] = concerts;
+        song['soloists'] = soloists;
+        song['semesters'] = semesters;
+        res.json(song);
+    }).then(null, function (e) {
+      console.log(e);
+      res.status(502);
+      res.json(e);
+    });
+  }
 });
 
 /**

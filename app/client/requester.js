@@ -30,7 +30,41 @@ module.exports = {
         res.on('error', function () {
           // TODO: reject with something
           reject();
-        })
+        });
+      });
+    });
+  },
+
+  /**
+   * Load all of a song's infos.
+   * Return a Promise that resolves with a song JSON object
+   * TODO should really document what this looks like somewhere
+   */
+  loadSong: function (id) {
+    return new Promise(function (resolve, reject) {
+      http.get('/loadsong?id=' + id, function (res) {
+              var stringified = '';
+        res.on('data', function (data) {
+          stringified += data;
+        });
+        res.on('end', function () {
+          var song;
+          try {
+            song = JSON.parse(stringified);
+            // TODO: is this a reliable error condition?
+            if (song.code)
+              // TODO: reject with something
+              reject();
+          } catch (e) {
+            song = {};
+          }
+          console.log(song);
+          resolve(song);
+        });
+        res.on('error', function () {
+          // TODO: reject with something
+          reject();
+        });
       });
     });
   },
