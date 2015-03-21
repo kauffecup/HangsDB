@@ -61,7 +61,32 @@ module.exports = {
   closeSong: function () {
     if (this._openSong) {
       this._openSong.open = false;
+      this._openSong.editing = false;
     }
+    this.updateCallbacks();
+  },
+
+  /**
+   * Edit a song - set its editing property true and notifiy any state observers
+   */
+  editSong: function (song) {
+    song.editing = true;
+    this.updateCallbacks();
+  },
+
+  /**
+   * When done editing, submit the edit, set editing to false, and notify state observers
+   */
+  onDoneEdit: function (song, edits) {
+    // TODO: submit edit
+    this.cancelEditSong(song);
+  },
+
+  /**
+   * If the user hits cancel, set editing to false, and notify state observers
+   */
+  cancelEditSong: function (song) {
+    song.editing = false;
     this.updateCallbacks();
   },
 
