@@ -1,7 +1,6 @@
-// first we load in the node modules
 var React = require('react'),
-    requester = require('./requester'),
-// then we load in our react modules
+    songController = require('./songController'),
+// react modules
     SongList = require('./SongList'),
     AddSongForm = require('./AddSongForm');
 
@@ -11,9 +10,14 @@ var React = require('react'),
  */
 var Sage = React.createClass({
   getInitialState: function () {
-    return {
-      songs: []
-    };
+    return {songs: []};
+  },
+
+  /**
+   * When the songs update, set the state of main
+   */
+  _onSongsUpdate: function (songs) {
+    this.setState({songs: songs});
   },
 
   /**
@@ -30,13 +34,12 @@ var Sage = React.createClass({
   },
 
   /**
-   * When this is in dom land, query the arrangements and update
-   * the state of the app.
+   * When this is in dom land, register this view controller and kick
+   * off the inital song load.
    */
   componentDidMount: function () {
-    requester.loadInitialSongs().then(function (songs) {
-      this.setState({songs: songs});
-    }.bind(this));
+    songController.registerCallback(this._onSongsUpdate.bind(this));
+    songController.loadInitialSongs();
   }
 });
 

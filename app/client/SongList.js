@@ -7,8 +7,7 @@ var React = require('react'),
  */
 module.exports = React.createClass({
   render: function () {
-    var songArr = this.props.songs || [];
-    var songs = songArr.map(function (song) {
+    var songs = this.props.songs.map(function (song) {
       return <Song song={song} />;
     });
 

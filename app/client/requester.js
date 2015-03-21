@@ -58,7 +58,6 @@ module.exports = {
           } catch (e) {
             song = {};
           }
-          console.log(song);
           resolve(song);
         });
         res.on('error', function () {
