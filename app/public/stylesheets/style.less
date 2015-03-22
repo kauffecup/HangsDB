@@ -96,20 +96,23 @@ body {
         align-items: baseline;
       }
 
-      h1, h2, h3 {
+      .song-name, .song-nickname, .song-year {
         font-weight: bold;
       }
 
-      h1 {
+      .song-name {
+        color: @primary-color1;
         font-size: 24px;
       }
 
-      h2 {
-        font-size: 22px;
+      .song-nickname {
         margin-left: 8px;
+        &, & input {
+          font-size: 22px;
+        }
       }
 
-      h3 {
+      .song-year {
         font-size: 18px;
         flex: 1;
         text-align: right;
@@ -143,68 +146,4 @@ body {
   width: 40px;
   height: 40px;
   line-height: 25px;
-}
-
-
-.add-song-form {
-  position: absolute;
-  bottom: 0;
-  right: 20px;
-  width: 600px;
-  height: 600px;
-  background: #fff;
-  margin: 0;
-  font-size: 13px;
-  box-shadow: 0 0 8px rgba(0,0,0,.18),0 8px 16px rgba(0,0,0,.36);
-
-  .header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    background-color: @primary-color1;
-    color: #fff;
-    padding: 14px 20px;
-    div {flex: 1;}
-  }
-
-  .close-form-button {
-    color: #fff;
-    background: none;
-    font-size: 18px;
-    height: 18px;
-    line-height: 18px;
-  }
-
-  .submit-song-button {
-    background: transparent;
-    position: absolute;
-    right: 20px;
-    bottom: 9px;
-    color: @primary-color1;
-    font-size: 15px;
-  }
-
-  .form-section {
-    padding: 10px 20px;
-  }
-
-  .form-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0px;
-    align-items: center;
-  }
-
-  input {
-    flex: 1;
-  }
-
-  textarea {
-    width: 100%;
-    height: 55px;
-  }
-
-  .form-section-header {
-    font-size: 16px;
-  }
 }

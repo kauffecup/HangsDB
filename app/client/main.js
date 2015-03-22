@@ -1,8 +1,7 @@
 var React = require('react'),
     songController = require('./songController'),
 // react modules
-    SongList = require('./SongList'),
-    AddSongForm = require('./AddSongForm');
+    SongList = require('./SongList');
 
 /**
  * A Sage Class.
@@ -29,7 +28,7 @@ var Sage = React.createClass({
               <h1>Sage</h1>
               <p>welcome to Sage.</p>
               <SongList songs={this.state.songs} />
-              <AddSongForm />
+              <button className='add-song-button sage-btn' onClick={songController.createSong.bind(songController)}>+</button>
             </div>;
   },
 

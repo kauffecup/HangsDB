@@ -15,10 +15,6 @@ module.exports = {
    */
   loadInitialSongs: function () {
     requester.loadInitialSongs().bind(this).then(function (songs) {
-      // add a 'key' prop for better React performance
-      songs.forEach(function (song) {
-        song['key'] = song.id;
-      });
       this._songs = songs;
       this.updateCallbacks();
     }, function (e) {
@@ -45,6 +41,15 @@ module.exports = {
   },
 
   /**
+   * Create a new empty song, ripe for the picking
+   */
+  createSong: function () {
+    this.closeSong();
+    this._songs.push({adding: true});
+    this.updateCallbacks();
+  },
+
+  /**
    * Open a song and fill it out with the servers response
    */
   openSong: function (song) {
@@ -64,6 +69,17 @@ module.exports = {
       this._openSong.editing = false;
     }
     this.updateCallbacks();
+  },
+
+  uploadSong: function (songObj) {
+    requester.uploadSong(songObj).bind(this).then(function (something) {
+      // for now, reload the pages
+      this.loadInitialSongs();
+    }, function (e) {
+      // for now, reload the pages
+      // TODO need to display a message or something
+      this.loadInitialSongs();
+    });
   },
 
   /**

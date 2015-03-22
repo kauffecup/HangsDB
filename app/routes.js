@@ -112,11 +112,11 @@ router.get('/loadsong', function (req, res) {
  * Upload endpoint. call the megatron of functions.
  */
 router.post('/upload', function (req, res) {
-  function stringToBoolean (string) {
-    if (string === 'true')
-      return true;
-    else if (string === 'false')
+  function numberToBoolean (num) {
+    if (num === '0')
       return false;
+    else if (num === '1')
+      return true;
     else
       return '';
   }
@@ -126,33 +126,33 @@ router.post('/upload', function (req, res) {
     arrangement.insertForAllFields(
       dbconnection,
       body.name,
-      body.opb,
-      body.year,
-      body.arrangedSemester,
+      body.artist_id, // TODO this field name will change after #7
+      body.original_song_year,
+      body.arranged_semester_id, // TODO this field name will change after #7
       body.quality,
       body.reception,
       body.genre,
-      body.arrType,
+      body.arrangement_type_id,
       body.nickname,
-      stringToBoolean(body.hasSyllables),
+      numberToBoolean(body.has_syllables),
       '',  // pdf URL, blank for now
       '',  // finale URL, blank for now
-      body.youtubeLink,
-      body.pitchBlown,
+      body.youtube_url,
+      body.pitch_blown,
       body.difficulty,
-      stringToBoolean(body.hasChoreo),
-      body.soloRange,
+      numberToBoolean(body.has_choreo),
+      body.solo_voice_part_id,
       body.notes,
-      body.key,
+      body.song_key,
       '',  // song URL, blank for now
-      stringToBoolean(body.isActive),
-      body.numParts,
+      numberToBoolean(body.active),
+      body.number_of_parts,
       // these have to be passed in as arrays, not as strings. if undefined,
       // send an empty string, not an array of an empty string
-      body.arrangedby && [].concat(body.arrangedby),
-      body.semestersIn && [].concat(body.semestersIn),
+      body.arrangers && [].concat(body.arrangers),
+      body.semesters && [].concat(body.semesters),
       body.soloists && [].concat(body.soloists),
-      body.mds && [].concat(body.mds),
+      body.directors && [].concat(body.directors),
       body.concertsIn && [].concat(body.concertsIn),
       function (err, result) {
         if (err) {

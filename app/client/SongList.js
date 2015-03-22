@@ -8,7 +8,7 @@ var React = require('react'),
 module.exports = React.createClass({
   render: function () {
     var songs = this.props.songs.map(function (song) {
-      return <Song song={song} />;
+      return <Song song={song} key={song.id} />;
     });
 
     return <ul className="song-list">{songs}</ul>;
