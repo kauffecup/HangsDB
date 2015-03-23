@@ -84,19 +84,23 @@ module.exports = {
         }
       };
       var req = http.request(options, function (res) {
-        var stringified = '';
-        res.on('data', function (data) {
-          stringified += data;
-        });
-        res.on('end', function () {
-          var resolveData;
-          try {
-            resolveData = JSON.parse(stringified);
-          } catch (e) {
-            resolveData = {};
-          }
-          resolve(resolveData);
-        });
+        if (res.statusCode === 200) {
+          var stringified = '';
+          res.on('data', function (data) {
+            stringified += data;
+          });
+          res.on('end', function () {
+            var resolveData;
+            try {
+              resolveData = JSON.parse(stringified);
+            } catch (e) {
+              resolveData = {};
+            }
+            resolve(resolveData);
+          });
+        } else {
+          reject();
+        }
       });
       req.on('error', function(e) {
         reject(e);

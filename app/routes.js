@@ -129,24 +129,24 @@ router.post('/upload', function (req, res) {
       body.artist_id, // TODO this field name will change after #7
       body.original_song_year,
       body.arranged_semester_id, // TODO this field name will change after #7
-      body.quality,
-      body.reception,
+      body.quality && parseInt(body.quality),
+      body.reception && parseInt(body.reception),
       body.genre,
-      body.arrangement_type_id,
+      body.arrangement_type_id && parseInt(body.arrangement_type_id),
       body.nickname,
       numberToBoolean(body.has_syllables),
       '',  // pdf URL, blank for now
       '',  // finale URL, blank for now
       body.youtube_url,
-      body.pitch_blown,
-      body.difficulty,
+      body.pitch_blown && parseInt(body.pitch_blown),
+      body.difficulty && parseInt(body.difficulty),
       numberToBoolean(body.has_choreo),
-      body.solo_voice_part_id,
+      body.solo_voice_part_id && parseInt(body.solo_voice_part_id),
       body.notes,
-      body.song_key,
+      body.song_key && parseInt(body.song_key),
       '',  // song URL, blank for now
       numberToBoolean(body.active),
-      body.number_of_parts,
+      body.number_of_parts && parseInt(body.number_of_parts),
       // these have to be passed in as arrays, not as strings. if undefined,
       // send an empty string, not an array of an empty string
       body.arrangers && [].concat(body.arrangers),
