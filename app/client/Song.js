@@ -62,6 +62,10 @@ var partMap = {
  * @prop valueMap - the map of value:displayvalue (one of the maps defined on top)
  */
 var Row = React.createClass({
+  flattenMap: function (map) {
+    return Object.keys(map).map(function(key) { return {value: key, display: map[key]}; });
+  },
+
   render: function () {
     var field = this.props.field,
         parent = this.props.parent,
@@ -90,7 +94,7 @@ var Row = React.createClass({
       if (editing) {
         // if there is a value map, the editable field will be a drop down
         if (valueMap) {
-          var items = flattenMap(valueMap);
+          var items = this.flattenMap(valueMap);
           items.unshift({value: ''});
           items = items.map(function (item) {
             return <option value={item.value} key={item.value}>{item.display}</option>;
@@ -142,10 +146,6 @@ var SongHeader = React.createClass({
   }
 });
 
-flattenMap = function (map) {
-  return Object.keys(map).map(function(key) { return {value: key, display: map[key]}; });
-}
-
 /**
  * A Song.
  * For now, only display the song's name and year.
@@ -153,10 +153,17 @@ flattenMap = function (map) {
  * @prop song - this song view controller's associated song model
  */
 module.exports = React.createClass({
+  /**
+   * The only state we keep track of and is used for when we're in edit mode and
+   * the song is treated as a form.
+   */
   getInitialState: function () {
     return this.flattenSong();
   },
 
+  /**
+   * This onChange event is used for when the user's typing in the song-as-a-form
+   */
   onChange: function (prop, e) {
     var newState = this.state;
     newState[prop] = e.target.value;
