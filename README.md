@@ -1,9 +1,7 @@
 HangsDB
 =======
 Gulp, and Forever, all need to be installed globally (`npm install ____ -g`).
-Install those, then run an `npm install`. Once you're all set to start and run
-you do `npm run start`
+Install those, then run an `npm install`.
 
-Also make sure that there's a directory named `js` in the public folder before
-you run `npm run start`. It isn't source controlled because we're ignoring the
-`bundle.js` output from browserify.
+Once you're all set to start and run you do `npm run build` and `npm run start`.
+Or if you're in dev town, simply do `npm run dev`.

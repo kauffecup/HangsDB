@@ -13,7 +13,7 @@
     }
   ],
   "scripts": {
-    "build": "gulp browserify",
+    "build": "gulp build",
     "start": "forever start ./bin/www",
     "debug": "gulp dev & forever start ./bin/www",
     "stop": "forever stopall"
@@ -21,33 +21,27 @@
   "dependencies": {
     "bluebird": "^2.9.14",
     "body-parser": "~1.8.1",
-    "browserify": "~9.0.3",
     "cookie-parser": "~1.3.3",
     "debug": "~2.0.0",
-    "express": "~4.9.0",
     "forever": "^0.12.0",
-    "gulp": "^3.8.11",
-    "gulp-uglify": "^1.1.0",
-    "less-middleware": "^1.0.4",
     "morgan": "~1.3.0",
     "mysql": "^2.5.5",
     "querystring": "^0.2.0",
     "react": "^0.12.2",
-    "reactify": "^1.0.0",
     "serve-favicon": "~2.1.3",
+  },
+  "devDependencies": {
+    "autoprefixer": "^5.1.0",
+    "babelify": "^5.0.4",
+    "browserify": "~9.0.3",
+    "csswring": "^3.0.2",
+    "express": "~4.9.0",
+    "gulp": "^3.8.11",
+    "gulp-less": "^3.0.2",
+    "gulp-postcss": "^4.0.3",
+    "gulp-uglify": "^1.1.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^2.4.0"
-  },
-  "private": true,
-  "browserify": {
-    "transform": [
-      [
-        "reactify",
-        {
-          "es6": true
-        }
-      ]
-    ]
   }
 }

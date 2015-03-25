@@ -2,7 +2,5 @@
 app/node_modules
 *.css
 *.log
-
-app/public/js/bundle.js
-
-app/public/js/.bundle.js
+app/public/bundle.js
+app/public/.bundle.js
