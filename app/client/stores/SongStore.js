@@ -154,6 +154,11 @@ AppDispatcher.register(function (action) {
       SongStore.emitChange();
       break;
 
+    case ActionConstants.CLOSE_OPEN_SONG:
+      closeOpenSong();
+      SongStore.emitChange();
+      break;
+
     case ActionConstants.UPLOAD_SONG_START:
     case ActionConstants.UPLOAD_SONG_SUCCESS:
     case ActionConstants.UPLOAD_SONG_FAILURE:

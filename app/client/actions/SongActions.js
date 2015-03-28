@@ -28,6 +28,11 @@ var SongActions = {
     });
   },
 
+  /** Close the currently open song */
+  closeOpenSong: function () {
+    AppDispatcher.dispatch({actionType: ActionConstants.CLOSE_OPEN_SONG});
+  },
+
   /** Create a song */
   createSong: function () {
     AppDispatcher.dispatch({actionType: ActionConstants.CREATE_SONG});

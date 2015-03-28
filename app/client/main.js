@@ -9,13 +9,6 @@ var React = require('react'),
  */
 var Sage = React.createClass({
   /**
-   * When the songs update, set the state of main
-   */
-  _onSongsUpdate: function (songs) {
-    this.setState({songs: songs});
-  },
-
-  /**
    * The sage app currently consists only of a title and a
    * song list.
    */
