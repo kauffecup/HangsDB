@@ -1,7 +1,6 @@
 HangsDB
 =======
-Gulp, and Forever, all need to be installed globally (`npm install ____ -g`).
-Install those, then run an `npm install`.
+A database for the hangovers! wooooo.
 
-Once you're all set to start and run you do `npm run build` and `npm run start`.
-Or if you're in dev town, simply do `npm run dev`.
+The database is live at http://sage.hangovers.com/. Head on over to the wiki to
+answer questions about how to run the code.

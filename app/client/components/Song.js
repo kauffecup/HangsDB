@@ -1,56 +1,6 @@
 var React = require('react'),
-    songController = require('./songController');
-
-var notesMap = {
-  0: 'C',
-  1: 'C#',
-  2: 'D',
-  3: 'Eb',
-  4: 'E',
-  5: 'F',
-  6: 'F#',
-  7: 'G',
-  8: 'Ab',
-  9: 'A',
-  10: 'Bb',
-  11: 'B'
-}
-
-var boolMap = {
-  0: 'no',
-  1: 'yes'
-}
-
-var difficultyMap = {
-  1: 'easy',
-  2: 'medium',
-  3: 'hard'
-}
-
-var receptionMap = {
-  1: 'hated it',
-  2: 'liked it',
-  3: 'loved it'
-}
-
-var typeMap = {
-  1: 'handwritten',
-  2: 'electronic',
-  3: 'copy of electronic'
-}
-
-var qualityMap = {
-  1: 'poor',
-  2: 'respectable',
-  3: 'pristine'
-}
-
-var partMap = {
-  1: 'tenor 1',
-  2: 'tenor 2',
-  3: 'baritone',
-  4: 'bass'
-}
+    SongConstants = require('../constants/SongConstants'),
+    SongActions = require('../actions/SongActions');
 
 /**
  * A helper row class. Sets up either a multivaluedrow or singlevalued row with
@@ -130,10 +80,10 @@ var SongHeader = React.createClass({
         editing = song.editing || song.adding;
     if (!editing) {
       return <div className='song-header'>
-              <div className='song-name'>{song.name}</div>
-              <div className='song-nickname'>{song.nickname ? '(' + song.nickname + ')' : ''}</div>
-              <div className='song-year'>{song.original_song_year}</div>
-            </div>
+               <div className='song-name'>{song.name}</div>
+               <div className='song-nickname'>{song.nickname ? '(' + song.nickname + ')' : ''}</div>
+               <div className='song-year'>{song.original_song_year}</div>
+             </div>
     } else {
       return <div className='song-header'>
                <input className='song-name' value={parent.state.name} onChange={parent.onChange.bind(parent, 'name')} placeholder='You Got A "C"'></input>
@@ -152,7 +102,7 @@ var SongHeader = React.createClass({
  * When clicked, a song is "open" and will display everything we know about it
  * @prop song - this song view controller's associated song model
  */
-module.exports = React.createClass({
+var Song = React.createClass({
   /**
    * The only state we keep track of and is used for when we're in edit mode and
    * the song is treated as a form.
@@ -176,7 +126,7 @@ module.exports = React.createClass({
    */
   onEdit: function () {
     this.setState(this.flattenSong());
-    songController.editSong(this.props.song);
+    SongActions.editSong(this.props.song);
   },
 
   /**
@@ -217,11 +167,7 @@ module.exports = React.createClass({
     state.directors = this.splitMulti(state.directors);
     state.concerts = this.splitMulti(state.concerts);
     state.semesters = this.splitMulti(state.semesters);
-    songController.uploadSong(state);
-  },
-
-  submitEdit: function () {
-    songController.onDoneEdit(this.props.song);
+    SongActions.uploadSong(state);
   },
 
   /**
@@ -236,7 +182,7 @@ module.exports = React.createClass({
     var interior;
     if (!isOpen) {
       interior = 
-        <div className='song-stuffs' onClick={songController.openSong.bind(songController, song)}>
+        <div className='song-stuffs' onClick={SongActions.openSong.bind(SongActions, song)}>
           <span className='song-title'>{song.name}</span>
           <span className='song-year'>{song.original_song_year}</span>
         </div>
@@ -247,13 +193,13 @@ module.exports = React.createClass({
         editSubmitClick = this.uploadSong;
         editSubmitText = 'upload'
       } else if (song.editing) {
-        editSubmitClick = songController.onDoneEdit.bind(songController, song);
+        editSubmitClick = SongActions.uploadEdits.bind(SongActions, song);
         editSubmitText = 'submit'
       } else {
         editSubmitClick = this.onEdit;
         editSubmitText = 'edit'
       }
-      // TODO: artist once we have more than just artist id songController.openSong(this.props.song)
+      // TODO: artist once we have more than just artist id
       // TODO: get arranged semester info from arrangement_semester_id, arrangement_type_id
       interior =
         <div className='song-stuffs'>
@@ -264,21 +210,21 @@ module.exports = React.createClass({
           <Row attr='Arranged in:'     field='arranged_semester_id' parent={this} placeholder='Spring 1987'/>
           <Row attr='Soloists:'        field='soloists'             parent={this} placeholder='Roshun Steppedinshit, Matt Damon' multi={true} />
           <Row attr='Directed by:'     field='directors'            parent={this} placeholder='Jron Poffeecoops, Mas Resbin' multi={true} />
-          <Row attr='Key:'             field='song_key'             parent={this} valueMap={notesMap} />
-          <Row attr='Active:'          field='active'               parent={this} valueMap={boolMap} />
-          <Row attr='Difficulty:'      field='difficulty'           parent={this} valueMap={difficultyMap} />
+          <Row attr='Key:'             field='song_key'             parent={this} valueMap={SongConstants.notesMap} />
+          <Row attr='Active:'          field='active'               parent={this} valueMap={SongConstants.boolMap} />
+          <Row attr='Difficulty:'      field='difficulty'           parent={this} valueMap={SongConstants.difficultyMap} />
           <Row attr='Genre:'           field='genre'                parent={this} placeholder='Country Sex' />
-          <Row attr='Has Choreo:'      field='has_choreo'           parent={this} valueMap={boolMap} />
-          <Row attr='Has Syllables:'   field='has_syllables'        parent={this} valueMap={boolMap} />
+          <Row attr='Has Choreo:'      field='has_choreo'           parent={this} valueMap={SongConstants.boolMap} />
+          <Row attr='Has Syllables:'   field='has_syllables'        parent={this} valueMap={SongConstants.boolMap} />
           <Row attr='Number of Parts:' field='number_of_parts'      parent={this} placeholder='5' />
-          <Row attr='Pitch Blown:'     field='pitch_blown'          parent={this} valueMap={notesMap} />
-          <Row attr='Quality:'         field='quality'              parent={this} valueMap={qualityMap} />
-          <Row attr='Group Reception:' field='reception'            parent={this} valueMap={receptionMap} />
-          <Row attr='Solo Range:'      field='solo_voice_part_id'   parent={this} valueMap={partMap} />
+          <Row attr='Pitch Blown:'     field='pitch_blown'          parent={this} valueMap={SongConstants.notesMap} />
+          <Row attr='Quality:'         field='quality'              parent={this} valueMap={SongConstants.qualityMap} />
+          <Row attr='Group Reception:' field='reception'            parent={this} valueMap={SongConstants.receptionMap} />
+          <Row attr='Solo Range:'      field='solo_voice_part_id'   parent={this} valueMap={SongConstants.partMap} />
           <Row attr='Youtubes:'        field='youtube_url'          parent={this} placeholder='https://www.youtube.com/watch?v=AdYaTa_lOf4' />
           <Row attr='Concerts:'        field='concerts'             parent={this} placeholder='Happy Hour XXXX, Fall Tonic II' multi={true} />
           <Row attr='Semesters:'       field='semesters'            parent={this} placeholder='Spring 2013, Fall 1999' multi={true} />
-          <Row attr='Type:'            field='arrangement_type_id'  parent={this} valueMap={typeMap} />
+          <Row attr='Type:'            field='arrangement_type_id'  parent={this} valueMap={SongConstants.typeMap} />
           <Row attr='Notes:'           field='notes'                parent={this} placeholder='This song is smelly.' />
         </div>
       ;
@@ -286,3 +232,5 @@ module.exports = React.createClass({
     return <li className={classes}>{interior}</li>;
   }
 });
+
+module.exports = Song;

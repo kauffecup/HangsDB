@@ -1,17 +1,13 @@
 var React = require('react'),
-    songController = require('./songController'),
+    SongActions = require('./actions/SongActions'),
 // react modules
-    SongList = require('./SongList');
+    SongList = require('./components/SongList');
 
 /**
  * A Sage Class.
  * Maintains an array of songs that are displayed.
  */
 var Sage = React.createClass({
-  getInitialState: function () {
-    return {songs: []};
-  },
-
   /**
    * When the songs update, set the state of main
    */
@@ -27,8 +23,8 @@ var Sage = React.createClass({
     return  <div className="sage">
               <h1>Sage</h1>
               <p>welcome to Sage.</p>
-              <SongList songs={this.state.songs} />
-              <button className='add-song-button sage-btn' onClick={songController.createSong.bind(songController)}>+</button>
+              <SongList />
+              <button className='add-song-button sage-btn' onClick={SongActions.createSong}>+</button>
             </div>;
   },
 
@@ -37,8 +33,7 @@ var Sage = React.createClass({
    * off the inital song load.
    */
   componentDidMount: function () {
-    songController.registerCallback(this._onSongsUpdate);
-    songController.loadInitialSongs();
+    SongActions.loadInitialSongs();
   }
 });
 
