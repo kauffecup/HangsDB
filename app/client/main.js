@@ -13,10 +13,14 @@ var Sage = React.createClass({
    */
   render: function () {
     return  <div className="sage">
-              <h1>Sage</h1>
-              <p>welcome to Sage.</p>
-              <SongList />
-              <button className='add-song-button sage-btn' onClick={SongActions.createSong}>+</button>
+              <div className="header">
+                <h1>Sage</h1>
+                <p>welcome to Sage.</p>
+              </div>
+              <div className="app">
+                <SongList />
+                <button className='add-song-button sage-btn' onClick={SongActions.createSong}>+</button>
+              </div>
             </div>;
   },
 

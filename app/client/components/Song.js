@@ -96,6 +96,13 @@ var Song = React.createClass({
   },
 
   /**
+   * When this is being removed, clean up the document handler
+   */
+  componentWillUnmount: function() {
+    document.removeEventListener('click', this.documentClickHandler);
+  },
+
+  /**
    * Render as a single row if the song is closed.
    * If it is open, display all the information about this song
    */

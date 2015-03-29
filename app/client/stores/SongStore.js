@@ -43,7 +43,9 @@ function update(id, updates) {
  */
 function createSong () {
   closeOpenSong();
-  _songs.push({adding: true});
+  _songs.push({adding: true, id: 'tempid'});
+  _songsIDMap['tempid'] = _songs.length - 1;
+  _currentlyOpenSongID = 'tempid';
 }
 
 /**
@@ -61,7 +63,13 @@ function openSong (id) {
  */
 function closeOpenSong () {
   if (_currentlyOpenSongID) {
-    update(_currentlyOpenSongID, {open: false});
+    // if the song we're closing is a fresh puppy, remove it.
+    // this assumes that the adding song is always at the end
+    if (_songs[_songsIDMap[_currentlyOpenSongID]].adding)
+      _songs.pop();
+    // otherwise, simply set open to false
+    else
+      update(_currentlyOpenSongID, {open: false});
     _currentlyOpenSongID = null;
   }
 }
