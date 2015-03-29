@@ -9,8 +9,7 @@ var React = require('react'),
  */
 var Sage = React.createClass({
   /**
-   * The sage app currently consists only of a title and a
-   * song list.
+   * The sage app currently consists only of a title and a song list.
    */
   render: function () {
     return  <div className="sage">
@@ -31,4 +30,4 @@ var Sage = React.createClass({
 });
 
 // Now we render the app in the page
-React.render(Sage(), document.body);
+React.render(<Sage />, document.body);
