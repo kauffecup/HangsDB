@@ -21,6 +21,30 @@ var Song = React.createClass({
   },
 
   /**
+   * Whenever a new song the user is added is put in the dom, scroll it in to view
+   */
+  componentDidMount: function () {
+    if (this.props.song.adding) {
+      SongActions.scrollSong(this.getDOMNode());
+    }
+  },
+
+  /**
+   * When this is being removed, clean up the document handler
+   */
+  componentWillUnmount: function () {
+    document.removeEventListener('click', this.documentClickHandler);
+  },
+
+  /**
+   * This is the event that we put on the document when a song is open... it closes the song.
+   */
+  documentClickHandler: function (e) {
+    if (!this.getDOMNode().contains(e.target))
+      SongActions.closeOpenSong();
+  },
+
+  /**
    * This onChange event is used for when the user's typing in the song-as-a-form
    */
   onChange: function (prop, e) {
@@ -80,29 +104,6 @@ var Song = React.createClass({
   },
 
   /**
-   * This is the event that we put on the document when a song is open... it closes the song.
-   */
-  documentClickHandler: function() {
-    SongActions.closeOpenSong();
-  },
-
-  /**
-   * Stop immediate propagation of an event. This is used so that we can put a click event
-   * on the document for clicking outside of a song.
-   * @param  {Event}
-   */
-  stopImmediate: function (e) {
-    e.nativeEvent.stopImmediatePropagation();
-  },
-
-  /**
-   * When this is being removed, clean up the document handler
-   */
-  componentWillUnmount: function() {
-    document.removeEventListener('click', this.documentClickHandler);
-  },
-
-  /**
    * Render as a single row if the song is closed.
    * If it is open, display all the information about this song
    */
@@ -115,6 +116,7 @@ var Song = React.createClass({
     if (!isOpen) {
       // if we're closed, remove the document click event that we registered
       document.removeEventListener('click', this.documentClickHandler);
+
       // configure the dom for the interior
       interior = 
         <div className='song-stuffs' onClick={SongActions.openSong.bind(SongActions, song)}>
@@ -125,6 +127,7 @@ var Song = React.createClass({
     } else {
       // if we're open, add a document click event that will close the song when clicked outside
       document.addEventListener('click', this.documentClickHandler);
+
       // configure the dom for the interior
       var editSubmitClick, editSubmitText;
       if (song.adding) {
@@ -140,7 +143,7 @@ var Song = React.createClass({
       // TODO: artist once we have more than just artist id
       // TODO: get arranged semester info from arrangement_semester_id, arrangement_type_id
       interior =
-        <div className='song-stuffs' onClick={this.stopImmediate}>
+        <div className='song-stuffs'>
           <SongHeader parent={this} />
           <button className='edit-btn sage-btn' onClick={editSubmitClick}>{editSubmitText}</button>
           <Row attr='opb:'             field='artist_id'            parent={this} placeholder='Ke$ha' />

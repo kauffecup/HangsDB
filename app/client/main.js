@@ -1,5 +1,8 @@
 var React = require('react'),
     SongActions = require('./actions/SongActions'),
+    ActionConstants = require('./constants/ActionConstants'),
+    AppDispatcher = require('./AppDispatcher'),
+    Animations = require('./animations/Animations'),
 // react modules
     SongList = require('./components/SongList');
 
@@ -17,10 +20,10 @@ var Sage = React.createClass({
                 <h1>Sage</h1>
                 <p>welcome to Sage.</p>
               </div>
-              <div className="app">
+              <div className="app" ref="scrollNode">
                 <SongList />
-                <button className='add-song-button sage-btn' onClick={SongActions.createSong}>+</button>
               </div>
+              <button className='add-song-button sage-btn' onClick={SongActions.createSong}>+</button>
             </div>;
   },
 
@@ -30,6 +33,16 @@ var Sage = React.createClass({
    */
   componentDidMount: function () {
     SongActions.loadInitialSongs();
+
+    // Register callback to handle all updates
+    // TODO: how bout is it to have this here? should we have a separate dispatcher for this kinda thing?
+    AppDispatcher.register(function (action) {
+      switch(action.actionType) {
+        case ActionConstants.SCROLL_SONG:
+          Animations.scrollIntoView(action.node, React.findDOMNode(this.refs.scrollNode));
+          break;
+      }
+    }.bind(this));
   }
 });
 

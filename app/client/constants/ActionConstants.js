@@ -10,5 +10,6 @@ module.exports = keyMirror({
   UPLOAD_SONG_START: null,
   UPLOAD_SONG_SUCCESS: null,
   UPLOAD_SONG_FAILURE: null,
-  CLOSE_OPEN_SONG: null
+  CLOSE_OPEN_SONG: null,
+  SCROLL_SONG: null
 });

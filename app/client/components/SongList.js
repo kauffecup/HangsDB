@@ -15,11 +15,11 @@ var SongList = React.createClass({
     return getSongsState();
   },
 
-  componentDidMount: function() {
+  componentDidMount: function () {
     SongStore.addChangeListener(this._onChange);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     SongStore.removeChangeListener(this._onChange);
   },
 

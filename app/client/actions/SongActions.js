@@ -67,6 +67,14 @@ var SongActions = {
       actionType: ActionConstants.UPLOAD_EDITS,
       songID: song.id
     });
+  },
+
+  /** Scroll a song in to view */
+  scrollSong: function (domNode) {
+    AppDispatcher.dispatch({
+      actionType: ActionConstants.SCROLL_SONG,
+      node: domNode
+    })
   }
 };
 
