@@ -4,14 +4,14 @@ var arrangement = require('./arrangement');
 dbconnection = connection.createConnection();
 connection.openConnection(dbconnection);
 
-// arrangement.getForId(dbconnection, 1, function(err, val)
-// {
-// 	console.log(val);
-//});
-
-arrangement.insertForAllFields(dbconnection, "junction_test","dummy artist",1901,"Fall 1902",10,1,"dummy genre",1,"","","","","","","","",1,"dummy notes",1,"f/dum",true,4,"","","","","", function(){
-	console.log("Here");
+arrangement.getArrangedSemesterForId(dbconnection, 1, function(err, val)
+{
+	console.log(val);
 });
+
+//arrangement.insertForAllFields(dbconnection, "junction_test","dummy artist",1901,"Fall 1902",10,1,"dummy genre",1,"","","","","",5,"","",1,"dummy notes",5,"f/dum",true,4,"","","","","", function(){
+//	console.log("Here");
+//});
 
 connection.closeConnection(dbconnection);
 

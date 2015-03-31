@@ -106,11 +106,13 @@ module.exports = {
 		sql += connection.escape(recording_url)+", ";
 		if(typeof song_key_id !== 'number')
 		{
+			if (typeof song_key_id === "string") console.log("Song key string");
 			song_key_id = null;
 		}
 		sql += connection.escape(song_key_id)+", ";
 		if(typeof blown_pitch_id !== 'number')
 		{
+			if (typeof blown_pitch_id === "string") console.log("Blown pitch string");
 			blown_pitch_id = null;
 		}
 		sql += connection.escape(blown_pitch_id)+", ";
@@ -351,7 +353,8 @@ module.exports = {
 
 		// The number of entries to skip before the first one we return
 		offset = pageSize*(pageNum-1)
-		sql = "SELECT * FROM arrangement LIMIT "+pageSize+" OFFSET "+offset+"";
+		sql = "SELECT a.id, a.name, b.name AS artist_name FROM arrangement a, artist b WHERE a.artist_id = b.id LIMIT "+pageSize+" OFFSET "+offset+"";;
+
 		connection.query(sql, callback);
 	},
 
@@ -464,6 +467,17 @@ module.exports = {
 	getSemestersForId: function (connecion, id, callback)
 	{
 		sql = "SELECT b.* FROM arrangement_semester a, semester b WHERE a.semester_id = b.id AND a.arrangement_id = "+id;
+		connection.query(sql, callback);
+	},
+
+	/*
+	* Queries the database, returning all info for the semester during which arrangement with id "id" was arranged.
+	*
+	* Use an arrangement ID.
+	*/
+	getArrangedSemesterForId: function (connection, id, callback)
+	{
+		sql = "SELECT b.* FROM arrangement a, semester b WHERE a.arranged_semester_id = b.id AND a.id = "+connection.escape(id);
 		connection.query(sql, callback);
 	},
 
