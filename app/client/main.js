@@ -18,7 +18,6 @@ var Sage = React.createClass({
     return  <div className="sage">
               <div className="header">
                 <h1>Sage</h1>
-                <p>welcome to Sage.</p>
               </div>
               <div className="app" ref="scrollNode">
                 <SongList />
@@ -35,7 +34,8 @@ var Sage = React.createClass({
     SongActions.loadInitialSongs();
 
     // Register callback to handle all updates
-    // TODO: how bout is it to have this here? should we have a separate dispatcher for this kinda thing?
+    // TODO: how bad is it to have this here? should we have a separate dispatcher for this kinda thing?
+    // we need to have something like this here so that we can reference the scroll node
     AppDispatcher.register(function (action) {
       switch(action.actionType) {
         case ActionConstants.SCROLL_SONG:

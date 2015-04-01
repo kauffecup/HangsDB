@@ -27,11 +27,9 @@ var SongRow = React.createClass({
 
     // if there is a value defined or we're editing, display the row
     if (valueDefined || editing) {
-      // if its a multi valued field, wrap each value in its own span
+      // if its a multi valued field, make it a comma separated list
       if (this.props.multi) {
-        value = value && value.map(function (value) {
-          return <span className='multi-value' key={value.id}>{value.name}</span>;
-        });
+        value = value && value.map(value => value.name).join(', ');
       // if its a mapped field, substitute in the real value. note that multi and map are mutually exclusive
       } else if (valueMap) {
         value = valueMap[value];
@@ -56,10 +54,12 @@ var SongRow = React.createClass({
         valueRow  = <span className='value'>{value}</span>;
       }
 
-      return <div className="song-row">
-             <span className='attr'>{this.props.attr}</span>
-             {valueRow}
-           </div>
+      var attribute = this.props.attr ? <span className='attr'>{this.props.attr}</span> : null;
+      var classes = 'song-row';
+      if (this.props.className)
+        classes += ' ' + this.props.className;
+      
+      return <div className={classes}>{attribute}{valueRow}</div>
     // return nothing if there is no value or we are not editing
     } else {
       return null;

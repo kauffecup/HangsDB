@@ -23,45 +23,29 @@ function loadBlankForId (id, funcName) {
 }
 
 /**
- * Load a songs row
+ * Helper methods for loading song info. Return the promise for database
+ * methods that fetch the info given the id. These are pretty self explanatory.
  */
 function loadSongRow (id) {
   return loadBlankForId(id, 'getForId');
 }
-
-/**
- * Load a songs arrangers
- */
 function loadArrangers (id) {
   return loadBlankForId(id, 'getArrangersForId');
 }
-
-/**
- * Load a songs directors
- */
 function loadDirectors (id) {
   return loadBlankForId(id, 'getDirectorsForId');
 }
-
-/**
- * Load a songs arrangers
- */
 function loadConcerts (id) {
   return loadBlankForId(id, 'getConcertsForId');
 }
-
-/**
- * Load a songs soloists
- */
 function loadSoloists (id) {
   return loadBlankForId(id, 'getSoloistsForId');
 }
-
-/**
- * Load a songs semesters
- */
 function loadSemesters (id) {
   return loadBlankForId(id, 'getSemestersForId');
+}
+function loadArrangedSemester (id) {
+  return loadBlankForId(id, 'getArrangedSemesterForId');
 }
 
 /* GET home page. */
@@ -91,14 +75,15 @@ router.get('/arrangements', function (req, res) {
 router.get('/loadsong', function (req, res) {
   var id = req.query && req.query.id;
   if (id) {
-    Promise.join(loadSongRow(id), loadArrangers(id), loadDirectors(id), loadConcerts(id), loadSoloists(id), loadSemesters(id),
-      function (song, arrangers, directors, concerts, soloists, semesters) {
+    Promise.join(loadSongRow(id), loadArrangers(id), loadDirectors(id), loadConcerts(id), loadSoloists(id), loadSemesters(id), loadArrangedSemester(id),
+      function (song, arrangers, directors, concerts, soloists, semesters, arrangedSemester) {
         song = song[0];
         song['arrangers'] = arrangers;
         song['directors'] = directors;
         song['concerts'] = concerts;
         song['soloists'] = soloists;
         song['semesters'] = semesters;
+        song['arranged_semester'] = arrangedSemester[0] && arrangedSemester[0].name;
         res.json(song);
     }).then(null, function (e) {
       console.log(e);
@@ -126,9 +111,9 @@ router.post('/upload', function (req, res) {
     arrangement.insertForAllFields(
       dbconnection,
       body.name,
-      body.artist_id, // TODO this field name will change after #7
+      body.artist_name,
       body.original_song_year,
-      body.arranged_semester_id, // TODO this field name will change after #7
+      body.arranged_semester,
       body.quality && parseInt(body.quality),
       body.reception && parseInt(body.reception),
       body.genre,
