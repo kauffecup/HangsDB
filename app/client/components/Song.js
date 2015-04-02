@@ -1,7 +1,7 @@
 var React = require('react'),
     SongConstants = require('../constants/SongConstants'),
     SongActions = require('../actions/SongActions'),
-    classNames = require('classNames'),
+    classNames = require('classnames'),
 // react components
     Row = require('./SongRow');
 

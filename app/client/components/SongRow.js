@@ -1,5 +1,5 @@
 var React = require('react'),
-    classNames = require('classNames');
+    classNames = require('classnames');
 
 /**
  * A helper row class. Sets up either a multivaluedrow or singlevalued row with
