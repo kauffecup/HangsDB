@@ -1,6 +1,7 @@
 var React = require('react'),
     SongConstants = require('../constants/SongConstants'),
     SongActions = require('../actions/SongActions'),
+    classNames = require('classNames'),
 // react components
     Row = require('./SongRow');
 
@@ -12,20 +13,11 @@ var React = require('react'),
  */
 var Song = React.createClass({
   /**
-   * The only state we keep track of and is used for when we're in edit mode and
-   * the song is treated as a form.
-   */
-  getInitialState: function () {
-    return this.flattenSong();
-  },
-
-  /**
    * Whenever a new song the user is added is put in the dom, scroll it in to view
    */
   componentDidMount: function () {
-    if (this.props.song.adding) {
+    if (this.props.song.adding)
       SongActions.scrollSong(this.getDOMNode());
-    }
   },
 
   /**
@@ -44,72 +36,13 @@ var Song = React.createClass({
   },
 
   /**
-   * This onChange event is used for when the user's typing in the song-as-a-form
-   */
-  onChange: function (prop, e) {
-    var newState = this.state;
-    newState[prop] = e.target.value;
-    this.setState(newState);
-  },
-
-  /**
-   * When the user clicks the edit button, set the state of this <Song>
-   * (now acting as a form) and prepare the song for editing
-   */
-  onEdit: function () {
-    this.setState(this.flattenSong());
-    SongActions.editSong(this.props.song);
-  },
-
-  /**
-   * Return a flattened song.
-   * Flattens multivalued fields into a single string so they can be
-   * edited by the form, nah mean?
-   */
-  flattenSong: function () {
-    // make sure we dont modify the actual song
-    var state = JSON.parse(JSON.stringify(this.props.song));
-    // flatten all multivalued fields
-    state.arrangers = state.arrangers && this.joinMulti(state.arrangers);
-    state.soloists = state.soloists && this.joinMulti(state.soloists);
-    state.directors = state.directors && this.joinMulti(state.directors);
-    state.concerts = state.concerts && this.joinMulti(state.concerts);
-    state.semesters = state.semesters && this.joinMulti(state.semesters);
-    return state;
-  },
-
-  /**
-   * Join a mutlivalued array of objects that have name properties with a comma
-   */
-  joinMulti: function (multi) {
-    return multi.map(function (value) {
-      return value.name;
-    }).join(', ');
-  },
-
-  splitMulti: function (multi) {
-    if (!multi) return;
-    return multi.split(',').map(function(str) {return str.trim()});
-  },
-
-  uploadSong: function () {
-    var state = this.state;
-    state.arrangers = this.splitMulti(state.arrangers);
-    state.soloists = this.splitMulti(state.soloists);
-    state.directors = this.splitMulti(state.directors);
-    state.concerts = this.splitMulti(state.concerts);
-    state.semesters = this.splitMulti(state.semesters);
-    SongActions.uploadSong(state);
-  },
-
-  /**
    * Render as a single row if the song is closed.
    * If it is open, display all the information about this song
    */
   render: function () {
     var song = this.props.song,
         isOpen = song.open || song.adding,
-        classes = isOpen ? 'song open' : 'song';
+        classes = classNames('song', {'open': isOpen});
 
     var interior;
     if (!isOpen) {
@@ -119,8 +52,8 @@ var Song = React.createClass({
       // configure the dom for the interior
       interior = 
         <div className='song-stuffs' onClick={SongActions.openSong.bind(SongActions, song)}>
-          <Row className='song-name'   field='name'        parent={this} placeholder='You Got A "C"' />
-          <Row className='song-artist' field='artist_name' parent={this} placeholder='Sebastian' />
+          <Row className='song-name'   value={song.name}        />
+          <Row className='song-artist' value={song.artist_name} />
         </div>
       ;
     } else {
@@ -130,53 +63,54 @@ var Song = React.createClass({
       // configure the dom for the interior
       var editSubmitClick, editSubmitText;
       if (song.adding) {
-        editSubmitClick = this.uploadSong;
+        editSubmitClick = SongActions.uploadSong.bind(SongActions, song);
         editSubmitText = 'upload'
       } else if (song.editing) {
         editSubmitClick = SongActions.uploadEdits.bind(SongActions, song);
         editSubmitText = 'submit'
       } else {
-        editSubmitClick = this.onEdit;
+        editSubmitClick = SongActions.editSong.bind(SongActions, song);
         editSubmitText = 'edit'
       }
 
       // this is the nick name row! we define it up here because we dont want the parens to be there
       // when there is no nickname! woo!
-      var nicknameRow = song.nickname ?
+      var formActive = song.editing || song.adding;
+      var nicknameRow = (song.nickname || formActive) ?
           <div className='song-nickname'>
-            (<Row field='nickname' parent={this} placeholder='YGAC' />)
+            (<Row formActive={formActive} value={song.nickname} editingValue={song.editing_nickname} onChange={SongActions.editField.bind(SongActions, song, 'editing_nickname')} placeholder='YGAC' />)
           </div>
           : null;
 
       interior =
         <div className='song-stuffs'>
           <div className='song-header'>
-            <Row className='song-name' field='name' parent={this} placeholder='You Got A "C"' />
+            <Row className='song-name' formActive={formActive} value={song.name} editingValue={song.editing_name} onChange={SongActions.editField.bind(SongActions, song, 'editing_name')} placeholder='You Got A "C"' />
             {nicknameRow}
-            <Row field='original_song_year' parent={this} placeholder='1983' />
-            <Row className='song-artist' field='artist_name' parent={this} placeholder='Sebastian' />
+            <Row formActive={formActive} value={song.original_song_year} editingValue={song.editing_original_song_year} onChange={SongActions.editField.bind(SongActions, song, 'editing_original_song_year')}  placeholder='1983' />
+            <Row className='song-artist' formActive={formActive} value={song.artist_name} editingValue={song.editing_artist_name} onChange={SongActions.editField.bind(SongActions, song, 'editing_artist_name')} placeholder='Sebastian' />
           </div>
           <button className='edit-btn sage-btn' onClick={editSubmitClick}>{editSubmitText}</button>
-          <Row attr='Arranged by:'     field='arrangers'           parent={this} placeholder='Adam Beckwith, Hasa Question' multi={true} />
-          <Row attr='Arranged in:'     field='arranged_semester'   parent={this} placeholder='Spring 1987'/>
-          <Row attr='Soloists:'        field='soloists'            parent={this} placeholder='Roshun Steppedinshit, Matt Damon' multi={true} />
-          <Row attr='Directed by:'     field='directors'           parent={this} placeholder='Jron Poffeecoops, Mas Resbin' multi={true} />
-          <Row attr='Key:'             field='song_key'            parent={this} valueMap={SongConstants.notesMap} />
-          <Row attr='Active:'          field='active'              parent={this} valueMap={SongConstants.boolMap} />
-          <Row attr='Difficulty:'      field='difficulty'          parent={this} valueMap={SongConstants.difficultyMap} />
-          <Row attr='Genre:'           field='genre'               parent={this} placeholder='Country Sex' />
-          <Row attr='Has Choreo:'      field='has_choreo'          parent={this} valueMap={SongConstants.boolMap} />
-          <Row attr='Has Syllables:'   field='has_syllables'       parent={this} valueMap={SongConstants.boolMap} />
-          <Row attr='Number of Parts:' field='number_of_parts'     parent={this} placeholder='5' />
-          <Row attr='Pitch Blown:'     field='pitch_blown'         parent={this} valueMap={SongConstants.notesMap} />
-          <Row attr='Quality:'         field='quality'             parent={this} valueMap={SongConstants.qualityMap} />
-          <Row attr='Group Reception:' field='reception'           parent={this} valueMap={SongConstants.receptionMap} />
-          <Row attr='Solo Range:'      field='solo_voice_part_id'  parent={this} valueMap={SongConstants.partMap} />
-          <Row attr='Youtubes:'        field='youtube_url'         parent={this} placeholder='https://www.youtube.com/watch?v=AdYaTa_lOf4' />
-          <Row attr='Concerts:'        field='concerts'            parent={this} placeholder='Happy Hour XXXX, Fall Tonic II' multi={true} />
-          <Row attr='Semesters:'       field='semesters'           parent={this} placeholder='Spring 2013, Fall 1999' multi={true} />
-          <Row attr='Type:'            field='arrangement_type_id' parent={this} valueMap={SongConstants.typeMap} />
-          <Row attr='Notes:'           field='notes'               parent={this} placeholder='This song is smelly.' />
+          <Row attr='Arranged by:'     formActive={formActive} value={song.arrangers}          editingValue={song.editing_arrangers}           onChange={SongActions.editField.bind(SongActions, song, 'editing_arrangers')}           placeholder='Adam Beckwith, Hasa Question' multi={true} />
+          <Row attr='Arranged in:'     formActive={formActive} value={song.arranged_semester}  editingValue={song.editing_arranged_semester}   onChange={SongActions.editField.bind(SongActions, song, 'editing_arranged_semester')}   placeholder='Spring 1987'/>
+          <Row attr='Soloists:'        formActive={formActive} value={song.soloists}           editingValue={song.editing_soloists}            onChange={SongActions.editField.bind(SongActions, song, 'editing_soloists')}            placeholder='Roshun Steppedinshit, Matt Damon' multi={true} />
+          <Row attr='Directed by:'     formActive={formActive} value={song.directors}          editingValue={song.editing_directors}           onChange={SongActions.editField.bind(SongActions, song, 'editing_directors')}           placeholder='Jron Poffeecoops, Mas Resbin' multi={true} />
+          <Row attr='Key:'             formActive={formActive} value={song.song_key}           editingValue={song.editing_song_key}            onChange={SongActions.editField.bind(SongActions, song, 'editing_song_key')}            valueMap={SongConstants.notesMap} />
+          <Row attr='Active:'          formActive={formActive} value={song.active}             editingValue={song.editing_active}              onChange={SongActions.editField.bind(SongActions, song, 'editing_active')}              valueMap={SongConstants.boolMap} />
+          <Row attr='Difficulty:'      formActive={formActive} value={song.difficulty}         editingValue={song.editing_difficulty}          onChange={SongActions.editField.bind(SongActions, song, 'editing_difficulty')}          valueMap={SongConstants.difficultyMap} />
+          <Row attr='Genre:'           formActive={formActive} value={song.genre}              editingValue={song.editing_genre}               onChange={SongActions.editField.bind(SongActions, song, 'editing_genre')}               placeholder='Country Sex' />
+          <Row attr='Has Choreo:'      formActive={formActive} value={song.has_choreo}         editingValue={song.editing_has_choreo}          onChange={SongActions.editField.bind(SongActions, song, 'editing_has_choreo')}          valueMap={SongConstants.boolMap} />
+          <Row attr='Has Syllables:'   formActive={formActive} value={song.has_syllables}      editingValue={song.editing_has_syllables}       onChange={SongActions.editField.bind(SongActions, song, 'editing_has_syllables')}       valueMap={SongConstants.boolMap} />
+          <Row attr='Number of Parts:' formActive={formActive} value={song.number_of_parts}    editingValue={song.editing_number_of_parts}     onChange={SongActions.editField.bind(SongActions, song, 'editing_number_of_parts')}     placeholder='5' />
+          <Row attr='Pitch Blown:'     formActive={formActive} value={song.pitch_blown}        editingValue={song.editing_pitch_blown}         onChange={SongActions.editField.bind(SongActions, song, 'editing_pitch_blown')}         valueMap={SongConstants.notesMap} />
+          <Row attr='Quality:'         formActive={formActive} value={song.quality}            editingValue={song.editing_quality}             onChange={SongActions.editField.bind(SongActions, song, 'editing_quality')}             valueMap={SongConstants.qualityMap} />
+          <Row attr='Group Reception:' formActive={formActive} value={song.reception}          editingValue={song.editing_reception}           onChange={SongActions.editField.bind(SongActions, song, 'editing_reception')}           valueMap={SongConstants.receptionMap} />
+          <Row attr='Solo Range:'      formActive={formActive} value={song.solo_voice_part_id} editingValue={song.editing_solo_voice_part_id}  onChange={SongActions.editField.bind(SongActions, song, 'editing_solo_voice_part_id')}  valueMap={SongConstants.partMap} />
+          <Row attr='Youtubes:'        formActive={formActive} value={song.youtube_url}        editingValue={song.editing_youtube_url}         onChange={SongActions.editField.bind(SongActions, song, 'editing_youtube_url')}         placeholder='https://www.youtube.com/watch?v=AdYaTa_lOf4' />
+          <Row attr='Concerts:'        formActive={formActive} value={song.concerts}           editingValue={song.editing_concerts}            onChange={SongActions.editField.bind(SongActions, song, 'editing_concerts')}            placeholder='Happy Hour XXXX, Fall Tonic II' multi={true} />
+          <Row attr='Semesters:'       formActive={formActive} value={song.semesters}          editingValue={song.editing_semesters}           onChange={SongActions.editField.bind(SongActions, song, 'editing_semesters')}           placeholder='Spring 2013, Fall 1999' multi={true} />
+          <Row attr='Type:'            formActive={formActive} value={song.arrangement_type_id}editingValue={song.editing_arrangement_type_id} onChange={SongActions.editField.bind(SongActions, song, 'editing_arrangement_type_id')} valueMap={SongConstants.typeMap} />
+          <Row attr='Notes:'           formActive={formActive} value={song.notes}              editingValue={song.editing_notes}               onChange={SongActions.editField.bind(SongActions, song, 'editing_notes')}               placeholder='This song is smelly.' />
         </div>
       ;
     }

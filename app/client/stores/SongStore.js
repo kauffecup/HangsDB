@@ -88,7 +88,29 @@ function loadSong (id, songJSON) {
  * @param  {SongID}
  */
 function editSong (id) {
-  update(id, {editing: true});
+  var editingState = {editing: true}, song = _songs[_songsIDMap[id]];
+  for (var prop in song) {
+    if (song.hasOwnProperty(prop)) {
+      if (prop !== 'id') {
+        editingState['editing_' + prop] = song[prop];
+      }
+    }
+  }
+  editingState.editing_arrangers = editingState.editing_arrangers && editingState.editing_arrangers.map(s => s.name);
+  editingState.editing_directors = editingState.editing_directors && editingState.editing_directors.map(s => s.name);
+  editingState.editing_semesters = editingState.editing_semesters && editingState.editing_semesters.map(s => s.name);
+  editingState.editing_soloists  = editingState.editing_soloists  && editingState.editing_soloists.map(s => s.name);
+  editingState.editing_concerts  = editingState.editing_concerts  && editingState.editing_concerts.map(s => s.name);
+  update(id, editingState);
+}
+
+function editField (id, field, newValue) {
+  if (field === 'editing_arrangers' || field === 'editing_soloists' || field === 'editing_directors' || field === 'editing_concerts' || field === 'editing_semesters')
+    newValue = newValue.split(', ');
+
+  var newState = {};
+  newState[field] = newValue;
+  update(id, newState)
 }
 
 /**
@@ -97,6 +119,15 @@ function editSong (id) {
  */
 function cancelEdit (id) {
   update(id, {editing: false}); 
+}
+
+/**
+ * Join a mutlivalued array of objects that have name properties with a comma
+ */
+function joinMulti (multi) {
+  return multi.map(function (value) {
+    return value.name;
+  }).join(', ');
 }
 
 var SongStore = assign({}, EventEmitter.prototype, {
@@ -154,6 +185,11 @@ AppDispatcher.register(function (action) {
 
     case ActionConstants.EDIT_SONG:
       editSong(action.songID);
+      SongStore.emitChange();
+      break;
+
+    case ActionConstants.EDIT_FIELD:
+      editField(action.songID, action.field, action.newValue);
       SongStore.emitChange();
       break;
 

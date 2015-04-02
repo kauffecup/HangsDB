@@ -1,4 +1,5 @@
-var React = require('react');
+var React = require('react'),
+    classNames = require('classNames');
 
 /**
  * A helper row class. Sets up either a multivaluedrow or singlevalued row with
@@ -15,29 +16,27 @@ var SongRow = React.createClass({
   },
 
   render: function () {
-    var field = this.props.field,
-        parent = this.props.parent,
-        song = parent.props.song,
-        editing = song.editing || song.adding,
-        value = song[field],
-        editingvalue = parent.state[field],
+    var formActive = this.props.formActive,
+        value = this.props.value,
+        editingvalue = this.props.editingValue,
         valueMap = this.props.valueMap,
         multi = this.props.multi,
         valueDefined = (!multi && (value || typeof value === 'number')) || (multi && value && value.length);
 
     // if there is a value defined or we're editing, display the row
-    if (valueDefined || editing) {
+    if (valueDefined || formActive) {
       // if its a multi valued field, make it a comma separated list
       if (this.props.multi) {
         value = value && value.map(value => value.name).join(', ');
+        editingvalue = editingvalue && editingvalue.join(', ');
       // if its a mapped field, substitute in the real value. note that multi and map are mutually exclusive
       } else if (valueMap) {
         value = valueMap[value];
       }
 
-      // if we're editing, use an input or drop down instead of a span. hook up the input with the parent's onchange event
+      // if we're editing, use an input or drop down instead of a span. hook up the input with the passed in onchange event
       var valueRow;
-      if (editing) {
+      if (formActive) {
         // if there is a value map, the editable field will be a drop down
         if (valueMap) {
           var items = this.flattenMap(valueMap);
@@ -45,22 +44,20 @@ var SongRow = React.createClass({
           items = items.map(function (item) {
             return <option value={item.value} key={item.value}>{item.display}</option>;
           });
-          valueRow = <select className='value' value={editingvalue} onChange={parent.onChange.bind(parent, field)}>{items}</select>;
+          valueRow = <select className='value' value={editingvalue} onChange={this.props.onChange}>{items}</select>;
         // otherwise the editable field is an input
         } else {
-          valueRow = <input className='value' value={editingvalue} onChange={parent.onChange.bind(parent, field)} placeholder={this.props.placeholder}></input>;
+          valueRow = <input className='value' value={editingvalue} onChange={this.props.onChange} placeholder={this.props.placeholder}></input>;
         }
       } else {
         valueRow  = <span className='value'>{value}</span>;
       }
 
       var attribute = this.props.attr ? <span className='attr'>{this.props.attr}</span> : null;
-      var classes = 'song-row';
-      if (this.props.className)
-        classes += ' ' + this.props.className;
-      
+      var classes = classNames('song-row', this.props.className);
+
       return <div className={classes}>{attribute}{valueRow}</div>
-    // return nothing if there is no value or we are not editing
+    // return nothing if there is no value and we're not editing
     } else {
       return null;
     }

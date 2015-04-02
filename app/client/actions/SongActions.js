@@ -5,7 +5,7 @@ var AppDispatcher = require('../AppDispatcher'),
 var SongActions = {
   /** Load the initial songs */
   loadInitialSongs: function () {
-    requester.loadInitialSongs().bind(this).then(function (songs) {
+    requester.loadInitialSongs().then(songs => {
       AppDispatcher.dispatch({
         actionType: ActionConstants.SONGS_LOADED,
         data: songs
@@ -19,7 +19,7 @@ var SongActions = {
       actionType: ActionConstants.OPEN_SONG_START,
       songID: song.id
     });
-    requester.loadSong(song.id).bind(this).then(function (songJSON) {
+    requester.loadSong(song.id).then(songJSON => {
       AppDispatcher.dispatch({
         actionType: ActionConstants.SONG_LOADED,
         songID: song.id,
@@ -40,12 +40,23 @@ var SongActions = {
 
   /** Upload a song */
   uploadSong: function (songObj) {
+    // TODO: it feels hacky that this is here? maybe have a separate action for pre-upload and upload?
+    // upload all of the editing values as their non-editing-value-name
+    var toUpload = {};
+    for (var key in songObj) {
+      if (songObj.hasOwnProperty(key)) {
+        if (key.indexOf('editing_') > -1) {
+          // substringing at 8 gives us the "prop" in "editing_prop"
+          toUpload[key.substring(8)] = songObj[key];
+        }
+      }
+    }
     AppDispatcher.dispatch({actionType: ActionConstants.UPLOAD_SONG_START});
-    requester.uploadSong(songObj).bind(this).then(function (something) {
+    requester.uploadSong(toUpload).then(something => {
       // for now, reload the pages
       this.loadInitialSongs();
       AppDispatcher.dispatch({actionType: ActionConstants.UPLOAD_SONG_SUCCESS});
-    }, function (e) {
+    }, e => {
       // for now, reload the pages
       // TODO need to display a message or something
       this.loadInitialSongs();
@@ -59,6 +70,16 @@ var SongActions = {
       actionType: ActionConstants.EDIT_SONG,
       songID: song.id
     });
+  },
+
+  /** Edit a field in a song from a change event */
+  editField: function (song, field, e) {
+    AppDispatcher.dispatch({
+      actionType: ActionConstants.EDIT_FIELD,
+      songID: song.id,
+      field: field,
+      newValue: e.target.value
+    })
   },
 
   /** Upload edits to a song */
