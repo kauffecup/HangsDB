@@ -124,7 +124,7 @@ var Song = React.createClass({
       document.addEventListener('click', this.documentClickHandler);
       headerRows = SongHeaderRows.map(row => this.constructRow(song, formActive, row));
       var bodyRows = SongBodyRows.map(row => this.constructRow(song, formActive, row));
-      transitionContent = song.loaded ? <SongBody song={song} bodyRows={bodyRows} /> : null;
+      transitionContent = (song.loaded || song.adding) ? <SongBody song={song} bodyRows={bodyRows} /> : null;
     } else {
       document.removeEventListener('click', this.documentClickHandler);
       headerRows = SongClosedRows.map(row => this.constructRow(song, formActive, row));
