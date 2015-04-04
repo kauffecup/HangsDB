@@ -43,7 +43,7 @@ function update(id, updates) {
  */
 function createSong () {
   closeOpenSong();
-  _songs.push({adding: true, id: 'tempid'});
+  _songs.push({adding: true, id: 'tempid', open: true});
   _songsIDMap['tempid'] = _songs.length - 1;
   _currentlyOpenSongID = 'tempid';
 }
@@ -55,7 +55,7 @@ function createSong () {
 function openSong (id) {
   closeOpenSong();
   _currentlyOpenSongID = id;
-  update(id, {open: true});
+  update(id, {open: true, loading: true && !_songs[_songsIDMap[id]].loaded});
 }
 
 /**
@@ -68,8 +68,10 @@ function closeOpenSong () {
     if (_songs[_songsIDMap[_currentlyOpenSongID]].adding)
       _songs.pop();
     // otherwise, simply set open to false
-    else
+    else {
       update(_currentlyOpenSongID, {open: false});
+      cancelEdit(_currentlyOpenSongID);
+    }
     _currentlyOpenSongID = null;
   }
 }
@@ -81,6 +83,7 @@ function closeOpenSong () {
  */
 function loadSong (id, songJSON) {
   update(id, songJSON);
+  update(id, {loading: false, loaded: true});
 }
 
 /**

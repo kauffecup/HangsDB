@@ -1,9 +1,49 @@
-var React = require('react'),
+var React = require('react/addons'),
     SongConstants = require('../constants/SongConstants'),
     SongActions = require('../actions/SongActions'),
     classNames = require('classnames'),
+    Animations = require('../animations/Animations'),
 // react components
+    TransitionGroup = React.addons.TransitionGroup,
     Row = require('./SongRow');
+
+// These will be the song rows displayed when a song is closed
+var SongClosedRows = [
+  {field: 'name',        class: 'song-name'},
+  {field: 'artist_name', class: 'song-artist'}
+];
+
+// These will be the song rows displayed in the header when the song is open
+var SongHeaderRows = [
+  {field: 'name',               placeholder: 'You Got A "C"', class: 'song-name'},
+  {field: 'nickname',           placeholder: 'YGAC',          class: 'song-nickname'},
+  {field: 'original_song_year', placeholder: '1983'},
+  {field: 'artist_name',        placeholder: 'Sebastian',     class: 'song-artist'}
+];
+
+// These will be the song rows displayed in the body when the song is open
+var SongBodyRows = [
+  {attr: 'Arranged by:',     field: 'arrangers',           placeholder: 'Adam Beckwith, Hasa Question', multi: true},
+  {attr: 'Arranged in:',     field: 'arranged_semester',   placeholder: 'Spring 1883'},
+  {attr: 'Soloists:',        field: 'soloists',            placeholder: 'Roshun Steppedinshit, Matt Damon', multi: true},
+  {attr: 'Directed by:',     field: 'directors',           placeholder: 'Jron Poffeecoops, Mas Resbin', multi: true},
+  {attr: 'Key:',             field: 'song_key',            valueMap: SongConstants.notesMap},
+  {attr: 'Active:',          field: 'active',              valueMap: SongConstants.boolMap},
+  {attr: 'Difficulty:',      field: 'difficulty',          valueMap: SongConstants.difficultyMap},
+  {attr: 'Genre:',           field: 'genre',               placeholder: 'Country Sex'},
+  {attr: 'Has Choreo:',      field: 'has_choreo',          valueMap: SongConstants.boolMap},
+  {attr: 'Has Syllables:',   field: 'has_syllables',       valueMap: SongConstants.boolMap},
+  {attr: 'Number of Parts:', field: 'number_of_parts',     placeholder: '5'},
+  {attr: 'Pitch Blown:',     field: 'editing_pitch_blown', valueMap: SongConstants.notesMap},
+  {attr: 'Quality:',         field: 'quality',             valueMap: SongConstants.qualityMap},
+  {attr: 'Group Reception:', field: 'reception',           valueMap: SongConstants.receptionMap},
+  {attr: 'Solo Range:',      field: 'solo_voice_part_id',  valueMap: SongConstants.partMap},
+  {attr: 'Youtubes:',        field: 'youtube_url',         placeholder: 'https://www.youtube.com/watch?v=AdYaTa_lOf4'},
+  {attr: 'Concerts:',        field: 'concerts',            placeholder: 'Happy Hour XXXX, Fall Tonic II', multi: true},
+  {attr: 'Semesters:',       field: 'semesters',           placeholder: 'Spring 2013, Fall 1999', multi: true},
+  {attr: 'Type:',            field: 'arrangement_type_id', valueMap: SongConstants.typeMap},
+  {attr: 'Notes:',           field: 'notes',               placeholder: 'This song is smelly.'}
+];
 
 /**
  * A Song.
@@ -16,8 +56,10 @@ var Song = React.createClass({
    * Whenever a new song the user is added is put in the dom, scroll it in to view
    */
   componentDidMount: function () {
-    if (this.props.song.adding)
+    if (this.props.song.adding) {
       SongActions.scrollSong(this.getDOMNode());
+      Animations.expandOut(this.getDOMNode());
+    }
   },
 
   /**
@@ -25,6 +67,19 @@ var Song = React.createClass({
    */
   componentWillUnmount: function () {
     document.removeEventListener('click', this.documentClickHandler);
+  },
+
+  /**
+   * Animate a song open or closed
+   */
+  componentDidUpdate: function () {
+    var songOpen = this.props.song.open;
+
+    if (songOpen) {
+      Animations.expandOut(this.getDOMNode());
+    } else {
+      Animations.collapseIn(this.getDOMNode());
+    }
   },
 
   /**
@@ -36,85 +91,84 @@ var Song = React.createClass({
   },
 
   /**
+   * Construct and return a song row
+   * @param  {SongModel}
+   * @param  {boolean} whether or not the form is active
+   * @param  {Object} options are class, attr, field, placeholder, multi, valuemap
+   */
+  constructRow: function (song, active, opts) {
+    return <Row className={opts.class}
+                attr={opts.attr}
+                formActive={active}
+                value={song[opts.field]}
+                editingValue={song['editing_' + opts.field]}
+                onChange={SongActions.editField.bind(SongActions, song, 'editing_' + opts.field)}
+                placeholder={opts.placeholder}
+                multi={opts.multi}
+                valueMap={opts.valueMap}
+                key={song.id + opts.field} />
+  },
+
+  /**
    * Render as a single row if the song is closed.
    * If it is open, display all the information about this song
    */
   render: function () {
     var song = this.props.song,
-        isOpen = song.open || song.adding,
-        classes = classNames('song', {'open': isOpen});
+        isOpen = song.open,
+        classes = classNames('song', {'open': isOpen, 'loading': song.loading});
 
-    var interior;
-    if (!isOpen) {
-      // if we're closed, remove the document click event that we registered
-      document.removeEventListener('click', this.documentClickHandler);
-
-      // configure the dom for the interior
-      interior = 
-        <div className='song-stuffs' onClick={SongActions.openSong.bind(SongActions, song)}>
-          <Row className='song-name'   value={song.name}        />
-          <Row className='song-artist' value={song.artist_name} />
-        </div>
-      ;
-    } else {
-      // if we're open, add a document click event that will close the song when clicked outside
+    var formActive = song.editing || song.adding;
+    var headerRows, transitionContent, onClick;
+    if (isOpen) {
       document.addEventListener('click', this.documentClickHandler);
-
-      // configure the dom for the interior
-      var editSubmitClick, editSubmitText;
-      if (song.adding) {
-        editSubmitClick = SongActions.uploadSong.bind(SongActions, song);
-        editSubmitText = 'upload'
-      } else if (song.editing) {
-        editSubmitClick = SongActions.uploadEdits.bind(SongActions, song);
-        editSubmitText = 'submit'
-      } else {
-        editSubmitClick = SongActions.editSong.bind(SongActions, song);
-        editSubmitText = 'edit'
-      }
-
-      // this is the nick name row! we define it up here because we dont want the parens to be there
-      // when there is no nickname! woo!
-      var formActive = song.editing || song.adding;
-      var nicknameRow = (song.nickname || formActive) ?
-          <div className='song-nickname'>
-            (<Row formActive={formActive} value={song.nickname} editingValue={song.editing_nickname} onChange={SongActions.editField.bind(SongActions, song, 'editing_nickname')} placeholder='YGAC' />)
-          </div>
-          : null;
-
-      interior =
-        <div className='song-stuffs'>
-          <div className='song-header'>
-            <Row className='song-name' formActive={formActive} value={song.name} editingValue={song.editing_name} onChange={SongActions.editField.bind(SongActions, song, 'editing_name')} placeholder='You Got A "C"' />
-            {nicknameRow}
-            <Row formActive={formActive} value={song.original_song_year} editingValue={song.editing_original_song_year} onChange={SongActions.editField.bind(SongActions, song, 'editing_original_song_year')}  placeholder='1983' />
-            <Row className='song-artist' formActive={formActive} value={song.artist_name} editingValue={song.editing_artist_name} onChange={SongActions.editField.bind(SongActions, song, 'editing_artist_name')} placeholder='Sebastian' />
-          </div>
-          <button className='edit-btn sage-btn' onClick={editSubmitClick}>{editSubmitText}</button>
-          <Row attr='Arranged by:'     formActive={formActive} value={song.arrangers}          editingValue={song.editing_arrangers}           onChange={SongActions.editField.bind(SongActions, song, 'editing_arrangers')}           placeholder='Adam Beckwith, Hasa Question' multi={true} />
-          <Row attr='Arranged in:'     formActive={formActive} value={song.arranged_semester}  editingValue={song.editing_arranged_semester}   onChange={SongActions.editField.bind(SongActions, song, 'editing_arranged_semester')}   placeholder='Spring 1987'/>
-          <Row attr='Soloists:'        formActive={formActive} value={song.soloists}           editingValue={song.editing_soloists}            onChange={SongActions.editField.bind(SongActions, song, 'editing_soloists')}            placeholder='Roshun Steppedinshit, Matt Damon' multi={true} />
-          <Row attr='Directed by:'     formActive={formActive} value={song.directors}          editingValue={song.editing_directors}           onChange={SongActions.editField.bind(SongActions, song, 'editing_directors')}           placeholder='Jron Poffeecoops, Mas Resbin' multi={true} />
-          <Row attr='Key:'             formActive={formActive} value={song.song_key}           editingValue={song.editing_song_key}            onChange={SongActions.editField.bind(SongActions, song, 'editing_song_key')}            valueMap={SongConstants.notesMap} />
-          <Row attr='Active:'          formActive={formActive} value={song.active}             editingValue={song.editing_active}              onChange={SongActions.editField.bind(SongActions, song, 'editing_active')}              valueMap={SongConstants.boolMap} />
-          <Row attr='Difficulty:'      formActive={formActive} value={song.difficulty}         editingValue={song.editing_difficulty}          onChange={SongActions.editField.bind(SongActions, song, 'editing_difficulty')}          valueMap={SongConstants.difficultyMap} />
-          <Row attr='Genre:'           formActive={formActive} value={song.genre}              editingValue={song.editing_genre}               onChange={SongActions.editField.bind(SongActions, song, 'editing_genre')}               placeholder='Country Sex' />
-          <Row attr='Has Choreo:'      formActive={formActive} value={song.has_choreo}         editingValue={song.editing_has_choreo}          onChange={SongActions.editField.bind(SongActions, song, 'editing_has_choreo')}          valueMap={SongConstants.boolMap} />
-          <Row attr='Has Syllables:'   formActive={formActive} value={song.has_syllables}      editingValue={song.editing_has_syllables}       onChange={SongActions.editField.bind(SongActions, song, 'editing_has_syllables')}       valueMap={SongConstants.boolMap} />
-          <Row attr='Number of Parts:' formActive={formActive} value={song.number_of_parts}    editingValue={song.editing_number_of_parts}     onChange={SongActions.editField.bind(SongActions, song, 'editing_number_of_parts')}     placeholder='5' />
-          <Row attr='Pitch Blown:'     formActive={formActive} value={song.pitch_blown}        editingValue={song.editing_pitch_blown}         onChange={SongActions.editField.bind(SongActions, song, 'editing_pitch_blown')}         valueMap={SongConstants.notesMap} />
-          <Row attr='Quality:'         formActive={formActive} value={song.quality}            editingValue={song.editing_quality}             onChange={SongActions.editField.bind(SongActions, song, 'editing_quality')}             valueMap={SongConstants.qualityMap} />
-          <Row attr='Group Reception:' formActive={formActive} value={song.reception}          editingValue={song.editing_reception}           onChange={SongActions.editField.bind(SongActions, song, 'editing_reception')}           valueMap={SongConstants.receptionMap} />
-          <Row attr='Solo Range:'      formActive={formActive} value={song.solo_voice_part_id} editingValue={song.editing_solo_voice_part_id}  onChange={SongActions.editField.bind(SongActions, song, 'editing_solo_voice_part_id')}  valueMap={SongConstants.partMap} />
-          <Row attr='Youtubes:'        formActive={formActive} value={song.youtube_url}        editingValue={song.editing_youtube_url}         onChange={SongActions.editField.bind(SongActions, song, 'editing_youtube_url')}         placeholder='https://www.youtube.com/watch?v=AdYaTa_lOf4' />
-          <Row attr='Concerts:'        formActive={formActive} value={song.concerts}           editingValue={song.editing_concerts}            onChange={SongActions.editField.bind(SongActions, song, 'editing_concerts')}            placeholder='Happy Hour XXXX, Fall Tonic II' multi={true} />
-          <Row attr='Semesters:'       formActive={formActive} value={song.semesters}          editingValue={song.editing_semesters}           onChange={SongActions.editField.bind(SongActions, song, 'editing_semesters')}           placeholder='Spring 2013, Fall 1999' multi={true} />
-          <Row attr='Type:'            formActive={formActive} value={song.arrangement_type_id}editingValue={song.editing_arrangement_type_id} onChange={SongActions.editField.bind(SongActions, song, 'editing_arrangement_type_id')} valueMap={SongConstants.typeMap} />
-          <Row attr='Notes:'           formActive={formActive} value={song.notes}              editingValue={song.editing_notes}               onChange={SongActions.editField.bind(SongActions, song, 'editing_notes')}               placeholder='This song is smelly.' />
-        </div>
-      ;
+      headerRows = SongHeaderRows.map(row => this.constructRow(song, formActive, row));
+      var bodyRows = SongBodyRows.map(row => this.constructRow(song, formActive, row));
+      transitionContent = song.loaded ? <SongBody song={song} bodyRows={bodyRows} /> : null;
+    } else {
+      document.removeEventListener('click', this.documentClickHandler);
+      headerRows = SongClosedRows.map(row => this.constructRow(song, formActive, row));
+      onClick = SongActions.openSong.bind(SongActions, song);
     }
-    return <li className={classes}>{interior}</li>;
+
+
+    return <li className={classes} key={song.id} onClick={onClick}>
+             <div className='song-header'>{headerRows}</div>
+             <TransitionGroup>{transitionContent}</TransitionGroup>
+           </li>;
+  }
+});
+
+/**
+ * Helper Body class so that we can have entering and leaving animations
+ */
+var SongBody = React.createClass({
+  componentWillEnter: function (callback) {
+    Animations.expandDown(this.getDOMNode()).then(callback);
+  },
+
+  componentWillLeave: function (callback) {
+    Animations.collapseUp(this.getDOMNode()).then(callback);
+  },
+
+  render: function () {
+    return <div className='song-body'><SongButton song={this.props.song} />{this.props.bodyRows}</div>
+  }
+});
+
+/**
+ * Helper Song Button class to handle the tristate-edness
+ */
+var SongButton = React.createClass({
+  render: function () {
+    var song = this.props.song;
+    if (song.adding) {
+      return <button className='edit-btn sage-btn' onClick={SongActions.uploadSong.bind(SongActions, song)}>upload</button>
+    } else if (song.editing) {
+      return <button className='edit-btn sage-btn' onClick={SongActions.uploadEdits.bind(SongActions, song)}>submit</button>
+    } else {
+      return <button className='edit-btn sage-btn' onClick={SongActions.editSong.bind(SongActions, song)}>edit</button>
+    }
   }
 });
 

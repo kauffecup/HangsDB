@@ -19,13 +19,16 @@ var SongActions = {
       actionType: ActionConstants.OPEN_SONG_START,
       songID: song.id
     });
-    requester.loadSong(song.id).then(songJSON => {
-      AppDispatcher.dispatch({
-        actionType: ActionConstants.SONG_LOADED,
-        songID: song.id,
-        data: songJSON
+    // only request it if the song hasnt been loaded yet
+    if (!song.loaded) {
+      requester.loadSong(song.id).then(songJSON => {
+        AppDispatcher.dispatch({
+          actionType: ActionConstants.SONG_LOADED,
+          songID: song.id,
+          data: songJSON
+        });
       });
-    });
+    }
   },
 
   /** Close the currently open song */

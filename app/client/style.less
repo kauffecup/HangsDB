@@ -68,12 +68,17 @@ body {
 
   .song {
     background: #fff;
-    border-bottom: 1px solid @background-color1;
-    transition: margin 100ms ease-out;
 
-    .song-stuffs {
-      padding: 10px;
+    .song-header {
       display: flex;
+      align-items: baseline;
+      padding: 10px;
+      border-bottom: 1px solid @background-color1;
+    }
+
+    .song-body {
+      overflow: hidden;
+      padding: 10px;
     }
 
     .song-artist {
@@ -88,21 +93,22 @@ body {
       font-size: 14px;
     }
 
+    .attr {
+      color: @secondary-text-color;
+      font-size: 14px;
+    }
+
+    .value {
+      font-size: 17px;
+    }
+
+    .value, .value span {
+      margin-left: 4px;
+    }
+
     &.open {
-      margin-left: -20px;
-      margin-right: -20px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-
-      .song-stuffs {
-        display: block;
-      }
+      display: block;
       
-      .song-header {
-        display: flex;
-        align-items: baseline;
-      }
-
       .song-name, .song-nickname, .song-artist {
         font-weight: bold;
       }
@@ -114,30 +120,19 @@ body {
 
       .song-nickname {
         margin-left: 8px;
-        display: flex;
         .value { margin:0; }
-        &, & input, .value {
+        & input, .value, &::before, &::after {
           font-size: 22px;
         }
+        // wrap the nickname in parenthesis
+        &::before {content: '(';}
+        &::after {content: ')';}
       }
 
       .song-artist .value {
         font-size: 18px;
         flex: 1;
         text-align: right;
-      }
-
-      .attr {
-        color: @secondary-text-color;
-        font-size: 14px;
-      }
-
-      .value {
-        font-size: 17px;
-      }
-
-      .value, .value span {
-        margin-left: 4px;
       }
     }
   }
