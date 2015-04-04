@@ -47,5 +47,4 @@ var Sage = React.createClass({
 });
 
 // Now we render the app in the page
-React.initializeTouchEvents(true);
 React.render(<Sage />, document.body);
