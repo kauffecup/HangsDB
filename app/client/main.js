@@ -4,6 +4,7 @@ var React = require('react'),
     AppDispatcher = require('./AppDispatcher'),
     Animations = require('./animations/Animations'),
 // react modules
+    SearchBar = require('./components/SearchBar'),
     SongList = require('./components/SongList');
 
 /**
@@ -18,6 +19,8 @@ var Sage = React.createClass({
     return  <div className="sage">
               <div className="header">
                 <h1>Sage</h1>
+                <SearchBar />
+                <h3>welcome to Sage.</h3>
               </div>
               <div className="app" ref="scrollNode">
                 <SongList />

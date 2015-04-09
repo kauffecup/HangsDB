@@ -9,16 +9,16 @@ var React = require('react/addons'),
 
 // These will be the song rows displayed when a song is closed
 var SongClosedRows = [
-  {field: 'name',        class: 'song-name'},
+  {field: 'name',        class: 'song-name',  h: 5},
   {field: 'artist_name', class: 'song-artist'}
 ];
 
 // These will be the song rows displayed in the header when the song is open
 var SongHeaderRows = [
-  {field: 'name',               placeholder: 'You Got A "C"', class: 'song-name'},
-  {field: 'nickname',           placeholder: 'YGAC',          class: 'song-nickname'},
-  {field: 'original_song_year', placeholder: '1983'},
-  {field: 'artist_name',        placeholder: 'Sebastian',     class: 'song-artist'}
+  {field: 'name',               placeholder: 'You Got A "C"', class: 'song-name', h: 2},
+  {field: 'nickname',           placeholder: 'YGAC',          class: 'song-nickname', h: 3},
+  {field: 'original_song_year', placeholder: '1983', h: 4},
+  {field: 'artist_name',        placeholder: 'Sebastian',     class: 'song-artist', h: 4}
 ];
 
 // These will be the song rows displayed in the body when the song is open
@@ -106,7 +106,8 @@ var Song = React.createClass({
                 placeholder={opts.placeholder}
                 multi={opts.multi}
                 valueMap={opts.valueMap}
-                key={song.id + opts.field} />
+                key={song.id + opts.field}
+                h={opts.h} />
   },
 
   /**

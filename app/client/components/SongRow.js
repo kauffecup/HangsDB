@@ -50,12 +50,19 @@ var SongRow = React.createClass({
           valueRow = <input className='value' value={editingvalue} onChange={this.props.onChange} placeholder={this.props.placeholder}></input>;
         }
       } else {
-        valueRow  = <span className='value'>{value}</span>;
+        switch (this.props.h) {
+          case 1: valueRow = <h1 className='value'>{value}</h1>; break;
+          case 2: valueRow = <h2 className='value'>{value}</h2>; break;
+          case 3: valueRow = <h3 className='value'>{value}</h3>; break;
+          case 4: valueRow = <h4 className='value'>{value}</h4>; break;
+          case 5: valueRow = <h5 className='value'>{value}</h5>; break;
+          case 6: valueRow = <h6 className='value'>{value}</h6>; break;
+          default: valueRow = <span className='value'>{value}</span>; break;
+        }
       }
 
-      var attribute = this.props.attr ? <span className='attr'>{this.props.attr}</span> : null;
+      var attribute = this.props.attr ? <h6>{this.props.attr}</h6> : null;
       var classes = classNames('song-row', this.props.className);
-
       return <div className={classes}>{attribute}{valueRow}</div>
     // return nothing if there is no value and we're not editing
     } else {
