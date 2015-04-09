@@ -1,6 +1,8 @@
-var http = require('http'),
-    querystring = require('querystring'),
-    Promise = require('bluebird');
+var Promise = require('bluebird');
+var request = Promise.promisifyAll(require('request').defaults({
+  baseUrl: 'http://' + window.location.host,
+  json: true
+}));
 
 module.exports = {
   /**
@@ -9,28 +11,10 @@ module.exports = {
    */
   loadInitialSongs: function () {
     return new Promise(function (resolve, reject) {
-      http.get('/arrangements', function (res) {
-        var stringified = '';
-        res.on('data', function (data) {
-          stringified += data;
-        });
-        res.on('end', function () {
-          var songs;
-          try {
-            songs = JSON.parse(stringified);
-            // TODO: is this a reliable error condition?
-            if (songs.code)
-              // TODO: reject with something
-              reject();
-          } catch (e) {
-            songs = [];
-          }
-          resolve(songs);
-        });
-        res.on('error', function () {
-          // TODO: reject with something
-          reject();
-        });
+      request.getAsync('/arrangements').then(function (res) {
+        resolve(res[1]);
+      }, function (e) {
+        reject(e);
       });
     });
   },
@@ -42,28 +26,10 @@ module.exports = {
    */
   loadSong: function (id) {
     return new Promise(function (resolve, reject) {
-      http.get('/loadsong?id=' + id, function (res) {
-              var stringified = '';
-        res.on('data', function (data) {
-          stringified += data;
-        });
-        res.on('end', function () {
-          var song;
-          try {
-            song = JSON.parse(stringified);
-            // TODO: is this a reliable error condition?
-            if (song.code)
-              // TODO: reject with something
-              reject();
-          } catch (e) {
-            song = {};
-          }
-          resolve(song);
-        });
-        res.on('error', function () {
-          // TODO: reject with something
-          reject();
-        });
+      request.getAsync('/loadsong?id=' + id).then(function (res) {
+        resolve(res[1]);
+      }, function (e) {
+        reject(e);
       });
     });
   },
@@ -74,40 +40,11 @@ module.exports = {
    */
    uploadSong: function (songOptions) {
     return new Promise(function (resolve, reject) {
-      var postData = querystring.stringify(songOptions);
-      var options = {
-        path: '/upload',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Content-Length': postData.length
-        }
-      };
-      var req = http.request(options, function (res) {
-        if (res.statusCode === 200) {
-          var stringified = '';
-          res.on('data', function (data) {
-            stringified += data;
-          });
-          res.on('end', function () {
-            var resolveData;
-            try {
-              resolveData = JSON.parse(stringified);
-            } catch (e) {
-              resolveData = {};
-            }
-            resolve(resolveData);
-          });
-        } else {
-          reject();
-        }
-      });
-      req.on('error', function(e) {
+      request.postAsync({url: '/upload', form: songOptions}).then(function (res) {
+        resolve(res[1]);
+      }, function (e) {
         reject(e);
       });
-      // write data to request body
-      req.write(postData);
-      req.end();
     });
    }
 }
