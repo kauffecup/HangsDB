@@ -28,10 +28,12 @@ var SongRow = React.createClass({
       // if its a multi valued field, make it a comma separated list
       if (this.props.multi) {
         value = value && value.map(value => value.name).join(', ');
-        editingvalue = editingvalue && editingvalue.join(', ');
       // if its a mapped field, substitute in the real value. note that multi and map are mutually exclusive
       } else if (valueMap) {
         value = valueMap[value];
+      // if its a file... link to it!
+      } else if (this.props.file) {
+        value = <a href={'/files/' + value} target='_blank'>clickers</a>
       }
 
       // if we're editing, use an input or drop down instead of a span. hook up the input with the passed in onchange event
@@ -45,11 +47,15 @@ var SongRow = React.createClass({
             return <option value={item.value} key={item.value}>{item.display}</option>;
           });
           valueRow = <select className='value' value={editingvalue} onChange={this.props.onChange}>{items}</select>;
+        // if its a file it'll be a file thing
+        } else if (this.props.file) {
+          valueRow = <input className='value' type='file' onChange={this.props.onChange}></input>
         // otherwise the editable field is an input
         } else {
           valueRow = <input className='value' value={editingvalue} onChange={this.props.onChange} placeholder={this.props.placeholder}></input>;
         }
       } else {
+        // if a header value is defined render that header. otherwise render a span.
         switch (this.props.h) {
           case 1: valueRow = <h1 className='value'>{value}</h1>; break;
           case 2: valueRow = <h2 className='value'>{value}</h2>; break;

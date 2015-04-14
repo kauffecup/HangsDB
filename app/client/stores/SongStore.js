@@ -62,7 +62,7 @@ function openSong (id) {
  * Close the currently open song (if there is one)
  */
 function closeOpenSong () {
-  if (_currentlyOpenSongID) {
+  if (_currentlyOpenSongID && _songs[_songsIDMap[_currentlyOpenSongID]]) {
     // if the song we're closing is a fresh puppy, remove it.
     // this assumes that the adding song is always at the end
     if (_songs[_songsIDMap[_currentlyOpenSongID]].adding)
@@ -70,7 +70,6 @@ function closeOpenSong () {
     // otherwise, simply set open to false
     else {
       update(_currentlyOpenSongID, {open: false});
-      cancelEdit(_currentlyOpenSongID);
     }
     _currentlyOpenSongID = null;
   }
@@ -84,53 +83,6 @@ function closeOpenSong () {
 function loadSong (id, songJSON) {
   update(id, songJSON);
   update(id, {loading: false, loaded: true});
-}
-
-/**
- * Prepare a song for editing
- * @param  {SongID}
- */
-function editSong (id) {
-  var editingState = {editing: true}, song = _songs[_songsIDMap[id]];
-  for (var prop in song) {
-    if (song.hasOwnProperty(prop)) {
-      if (prop !== 'id') {
-        editingState['editing_' + prop] = song[prop];
-      }
-    }
-  }
-  editingState.editing_arrangers = editingState.editing_arrangers && editingState.editing_arrangers.map(s => s.name);
-  editingState.editing_directors = editingState.editing_directors && editingState.editing_directors.map(s => s.name);
-  editingState.editing_semesters = editingState.editing_semesters && editingState.editing_semesters.map(s => s.name);
-  editingState.editing_soloists  = editingState.editing_soloists  && editingState.editing_soloists.map(s => s.name);
-  editingState.editing_concerts  = editingState.editing_concerts  && editingState.editing_concerts.map(s => s.name);
-  update(id, editingState);
-}
-
-function editField (id, field, newValue) {
-  if (field === 'editing_arrangers' || field === 'editing_soloists' || field === 'editing_directors' || field === 'editing_concerts' || field === 'editing_semesters')
-    newValue = newValue.split(', ');
-
-  var newState = {};
-  newState[field] = newValue;
-  update(id, newState)
-}
-
-/**
- * Cancel a song's edit
- * @param  {SongID}
- */
-function cancelEdit (id) {
-  update(id, {editing: false}); 
-}
-
-/**
- * Join a mutlivalued array of objects that have name properties with a comma
- */
-function joinMulti (multi) {
-  return multi.map(function (value) {
-    return value.name;
-  }).join(', ');
 }
 
 var SongStore = assign({}, EventEmitter.prototype, {
@@ -186,18 +138,7 @@ AppDispatcher.register(function (action) {
       createSong();
       SongStore.emitChange();
 
-    case ActionConstants.EDIT_SONG:
-      editSong(action.songID);
-      SongStore.emitChange();
-      break;
-
-    case ActionConstants.EDIT_FIELD:
-      editField(action.songID, action.field, action.newValue);
-      SongStore.emitChange();
-      break;
-
     case ActionConstants.UPLOAD_EDITS:
-      cancelEdit(action.songID);
       SongStore.emitChange();
       break;
 

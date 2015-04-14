@@ -4,9 +4,9 @@ var request = Promise.promisifyAll(require('request').defaults({
   json: true
 }));
 
-module.exports = {
+var requester = {
   /**
-   * Load the first "page" of songs.
+   * Load the first 'page' of songs.
    * @return a bluebird promise that resolves with an array of songs
    */
   loadInitialSongs: function () {
@@ -38,13 +38,22 @@ module.exports = {
    * Add a song to the database
    * @return a bluebird promise that resolves with the server success response
    */
-   uploadSong: function (songOptions) {
+  uploadSong: function (songOptions) {
     return new Promise(function (resolve, reject) {
-      request.postAsync({url: '/upload', form: songOptions}).then(function (res) {
-        resolve(res[1]);
-      }, function (e) {
-        reject(e);
-      });
+      var formData = new FormData();
+      for (var key in songOptions) {
+        formData.append(key, songOptions[key]);
+      }
+      var xhr = new XMLHttpRequest();
+
+      xhr.addEventListener('load', resolve);
+      xhr.addEventListener('error', reject);
+      xhr.addEventListener('abort', reject);
+
+      xhr.open('POST', 'http://' + window.location.host + '/upload');
+      xhr.send(formData);
     });
-   }
+  }
 }
+
+module.exports = requester;

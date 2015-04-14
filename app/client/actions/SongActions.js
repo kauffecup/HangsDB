@@ -43,19 +43,8 @@ var SongActions = {
 
   /** Upload a song */
   uploadSong: function (songObj) {
-    // TODO: it feels hacky that this is here? maybe have a separate action for pre-upload and upload?
-    // upload all of the editing values as their non-editing-value-name
-    var toUpload = {};
-    for (var key in songObj) {
-      if (songObj.hasOwnProperty(key)) {
-        if (key.indexOf('editing_') > -1) {
-          // substringing at 8 gives us the "prop" in "editing_prop"
-          toUpload[key.substring(8)] = songObj[key];
-        }
-      }
-    }
     AppDispatcher.dispatch({actionType: ActionConstants.UPLOAD_SONG_START});
-    requester.uploadSong(toUpload).then(something => {
+    requester.uploadSong(songObj).then(something => {
       // for now, reload the pages
       this.loadInitialSongs();
       AppDispatcher.dispatch({actionType: ActionConstants.UPLOAD_SONG_SUCCESS});
@@ -65,24 +54,6 @@ var SongActions = {
       this.loadInitialSongs();
       AppDispatcher.dispatch({actionType: ActionConstants.UPLOAD_SONG_FAILURE});
     });
-  },
-
-  /** Edit a Song */
-  editSong: function (song) {
-    AppDispatcher.dispatch({
-      actionType: ActionConstants.EDIT_SONG,
-      songID: song.id
-    });
-  },
-
-  /** Edit a field in a song from a change event */
-  editField: function (song, field, e) {
-    AppDispatcher.dispatch({
-      actionType: ActionConstants.EDIT_FIELD,
-      songID: song.id,
-      field: field,
-      newValue: e.target.value
-    })
   },
 
   /** Upload edits to a song */

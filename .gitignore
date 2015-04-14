@@ -4,3 +4,6 @@ app/node_modules
 *.log
 app/public/bundle.js
 app/public/.bundle.js
+*.pdf
+*.mus
+*.mp3

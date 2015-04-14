@@ -42,6 +42,9 @@ var SongBodyRows = [
   {attr: 'Concerts:',        field: 'concerts',            placeholder: 'Happy Hour XXXX, Fall Tonic II', multi: true},
   {attr: 'Semesters:',       field: 'semesters',           placeholder: 'Spring 2013, Fall 1999', multi: true},
   {attr: 'Type:',            field: 'arrangement_type_id', valueMap: SongConstants.typeMap},
+  {attr: 'PDF:',             field: 'pdf',                 file: true},
+  {attr: 'Finale:',          field: 'finale',              file: true},
+  {attr: 'Song:',            field: 'song',                file: true},
   {attr: 'Notes:',           field: 'notes',               placeholder: 'This song is smelly.'}
 ];
 
@@ -52,6 +55,12 @@ var SongBodyRows = [
  * @prop song - this song view controller's associated song model
  */
 var Song = React.createClass({
+  getInitialState: function () {
+    return {
+      formActive: this.props.song.editing || this.props.song.adding
+    }
+  },
+
   /**
    * Whenever a new song the user is added is put in the dom, scroll it in to view
    */
@@ -86,26 +95,28 @@ var Song = React.createClass({
    * This is the event that we put on the document when a song is open... it closes the song.
    */
   documentClickHandler: function (e) {
-    if (!this.getDOMNode().contains(e.target))
+    if (!this.getDOMNode().contains(e.target)) {
+      this.cancelEdit();
       SongActions.closeOpenSong();
+    }
   },
 
   /**
    * Construct and return a song row
    * @param  {SongModel}
-   * @param  {boolean} whether or not the form is active
    * @param  {Object} options are class, attr, field, placeholder, multi, valuemap
    */
-  constructRow: function (song, active, opts) {
+  constructRow: function (song, opts) {
     return <Row className={opts.class}
                 attr={opts.attr}
-                formActive={active}
-                value={song[opts.field]}
-                editingValue={song['editing_' + opts.field]}
-                onChange={SongActions.editField.bind(SongActions, song, 'editing_' + opts.field)}
+                formActive={this.state.formActive}
+                value={opts.file ? song[opts.field + '_url'] : song[opts.field]}
+                editingValue={this.state['editing_' + opts.field]}
+                onChange={opts.file ? this.handleFile.bind(this, 'editing_' + opts.field) : this.onChange.bind(this, 'editing_' + opts.field)}
                 placeholder={opts.placeholder}
                 multi={opts.multi}
                 valueMap={opts.valueMap}
+                file={opts.file}
                 key={song.id + opts.field}
                 h={opts.h} />
   },
@@ -119,24 +130,87 @@ var Song = React.createClass({
         isOpen = song.open,
         classes = classNames('song', {'open': isOpen, 'loading': song.loading});
 
-    var formActive = song.editing || song.adding;
+    var button;
+    if (song.adding) {
+      button = <button className='edit-btn sage-btn' onClick={this.uploadSong}>upload</button>
+    } else if (song.editing) {
+      button = <button className='edit-btn sage-btn' onClick={this.uploadEdits}>submit</button>
+    } else {
+      button = <button className='edit-btn sage-btn' onClick={this.prepareForEdit}>edit</button>
+    }
+
     var headerRows, transitionContent, onClick;
     if (isOpen) {
       document.addEventListener('click', this.documentClickHandler);
-      headerRows = SongHeaderRows.map(row => this.constructRow(song, formActive, row));
-      var bodyRows = SongBodyRows.map(row => this.constructRow(song, formActive, row));
-      transitionContent = (song.loaded || song.adding) ? <SongBody song={song} bodyRows={bodyRows} /> : null;
+      headerRows = SongHeaderRows.map(row => this.constructRow(song, row));
+      var bodyRows = SongBodyRows.map(row => this.constructRow(song, row));
+      transitionContent = (song.loaded || song.adding) ? <SongBody button={button} bodyRows={bodyRows} /> : null;
     } else {
       document.removeEventListener('click', this.documentClickHandler);
-      headerRows = SongClosedRows.map(row => this.constructRow(song, formActive, row));
+      headerRows = SongClosedRows.map(row => this.constructRow(song, row));
       onClick = SongActions.openSong.bind(SongActions, song);
     }
-
 
     return <li className={classes} key={song.id} onClick={onClick}>
              <div className='song-header'>{headerRows}</div>
              <TransitionGroup>{transitionContent}</TransitionGroup>
            </li>;
+  },
+
+  onChange: function (field, e) {
+    var newState = {};
+    newState[field] = e.target.value;
+    this.setState(newState);
+  },
+
+  /**
+   * when a file is passed to the input field, retrieve the contents as a
+   * base64-encoded data URI and save it to the component's state
+   */
+  handleFile: function (field, e) {
+    var state = {};
+    state[field] = e.target.files[0];
+    this.setState(state);
+  },
+
+  uploadSong: function () {
+    var toUpload = {};
+    for (var key in this.state) {
+      if (this.state.hasOwnProperty(key) && key.indexOf('editing_') > -1) {
+        var value = this.state[key];
+        if (key === 'editing_arrangers' || key === 'editing_soloists' || key === 'editing_directors' || key === 'editing_concerts' || key === 'editing_semesters')
+          value = value.split(',').map(s => s.trim());
+        // substringing at 8 gives us the "prop" in "editing_prop"
+        toUpload[key.substring(8)] = value;
+      }
+    }
+    SongActions.uploadSong(toUpload);
+  },
+
+  prepareForEdit: function () {
+    var song = this.props.song;
+    var formState = {formActive: true};
+    for (var prop in song) {
+      if (song.hasOwnProperty(prop)) {
+        if (prop !== 'id') {
+          formState['editing_' + prop] = song[prop];
+        }
+      }
+    }
+    formState.editing_arrangers = formState.editing_arrangers && formState.editing_arrangers.map(s => s.name).join(', ');
+    formState.editing_directors = formState.editing_directors && formState.editing_directors.map(s => s.name).join(', ');
+    formState.editing_semesters = formState.editing_semesters && formState.editing_semesters.map(s => s.name).join(', ');
+    formState.editing_soloists  = formState.editing_soloists  && formState.editing_soloists.map(s => s.name).join(', ');
+    formState.editing_concerts  = formState.editing_concerts  && formState.editing_concerts.map(s => s.name).join(', ');
+    this.setState(formState);
+  },
+
+  uploadEdits: function () {
+    this.cancelEdit();
+  },
+
+  cancelEdit: function () {
+    this.setState({formActive: false});
   }
 });
 
@@ -147,29 +221,11 @@ var SongBody = React.createClass({
   componentWillEnter: function (callback) {
     Animations.expandDown(this.getDOMNode()).then(callback);
   },
-
   componentWillLeave: function (callback) {
     Animations.collapseUp(this.getDOMNode()).then(callback);
   },
-
   render: function () {
-    return <div className='song-body'><SongButton song={this.props.song} />{this.props.bodyRows}</div>
-  }
-});
-
-/**
- * Helper Song Button class to handle the tristate-edness
- */
-var SongButton = React.createClass({
-  render: function () {
-    var song = this.props.song;
-    if (song.adding) {
-      return <button className='edit-btn sage-btn' onClick={SongActions.uploadSong.bind(SongActions, song)}>upload</button>
-    } else if (song.editing) {
-      return <button className='edit-btn sage-btn' onClick={SongActions.uploadEdits.bind(SongActions, song)}>submit</button>
-    } else {
-      return <button className='edit-btn sage-btn' onClick={SongActions.editSong.bind(SongActions, song)}>edit</button>
-    }
+    return <div className='song-body'>{this.props.button}{this.props.bodyRows}</div>
   }
 });
 
