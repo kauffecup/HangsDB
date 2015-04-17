@@ -528,4 +528,26 @@ module.exports = {
 		}
 		connection.query(sql, callback);
 	},
+
+	/*
+	* Note that you can't set the id field. That's static for a given song and passing an id in this object will throw an error
+	*/
+	setFieldsForId: function (connection, id, obj, callback)
+	{
+		sql = "UPDATE arrangement SET ";
+		sql2 = "" // Store fields to change in separate string to make commas easier
+		for (var key in obj)
+		{
+			if (obj.hasOwnProperty(key))
+			{
+				if(sql2) // Not first field, put a comma between the previous field and this one
+				{
+					sql2 += ", "
+				}
+				sql2 += key + " = " + connection.escape(obj[key]);
+			}
+		}
+		sql += sql2 + " WHERE id = " + connection.escape(id);
+		connection.query(sql, callback);
+	},
 };
