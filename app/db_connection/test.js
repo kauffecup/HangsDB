@@ -4,8 +4,8 @@ var arrangement = require('./arrangement');
 dbconnection = connection.createConnection();
 connection.openConnection(dbconnection);
 
-var arr = {original_song_year:6};
-arrangement.setFieldsForId(dbconnection, 21, arr, function(err, val)
+//var arr = {original_song_year:6};
+arrangement.getPage(dbconnection, 1, function(err, val)
 {
 	console.log(val);
 });
