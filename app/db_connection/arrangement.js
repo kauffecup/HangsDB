@@ -334,6 +334,13 @@ module.exports = {
 		});
 	},
 
+	// NOTE: DOES NOT WORK ON ARRANGEMENTS REFERENCED BY OTHER TABLES DUE TO DATABASE CONFIGURATIONS. WILL FIX.
+	deleteForId: function(connection, id, callback)
+	{
+		sql = "DELETE FROM arrangement WHERE id = " + connection.escape(id);
+		connection.query(sql, callback);
+	},
+
 	/*
 	* Queries the database, returning pageSize arrangements from the given pageNum
 	* and passing them to callback(error, rows).
@@ -353,10 +360,16 @@ module.exports = {
 
 		// The number of entries to skip before the first one we return
 		offset = pageSize*(pageNum-1)
-		sql = "SELECT a.id, a.name, b.name AS artist_name FROM arrangement a, artist b WHERE a.artist_id = b.id ORDER BY a.name LIMIT "+pageSize+" OFFSET "+offset+"";;
+		sql = "SELECT arrangement.id, arrangement.name, artist.name AS artist_name FROM arrangement LEFT JOIN artist";
+		sql += " ON arrangement.artist_id = artist.id ORDER BY arrangement.name LIMIT "+pageSize+" OFFSET "+offset+"";;
 
 		connection.query(sql, callback);
 	},
+
+	// getAllForConcert: function (connection, concert_id, callback)
+	// {
+	// 	sql = "SELECT a.id, a.name, b.name AS artist_name FROM arrangement a, artist b, concert c WHERE"
+	// },
 
 	/*
 	* Queries the database, returning all arrangements where "field" matches "value"
@@ -406,6 +419,17 @@ module.exports = {
 		connection.query(sql, callback);
 	},
 
+	addArrangerForId: function(connection, arrangement_id, arranger_id, callback)
+	{
+		sql = "INSERT INTO arrangement_arranger (arrangement_id, arranger_id) VALUES("+connection.escape(arrangement_id)+", "+connection.escape(arranger_id)+")";
+		connection.query(sql, callback);
+	},
+
+	deleteArrangerForId: function(connection, arrangement_id, arranger_id, callback)
+	{
+		sql = "DELETE FROM arrangement_arranger WHERE arranger_id = "+connection.escape(arranger_id);
+		connection.query(sql, callback);
+	},
 	/*
 	* Queries the database, returning all concerts where we performed the arrangement with id "id"
 	* and passing them to callback(error, rows).
@@ -419,6 +443,18 @@ module.exports = {
 	getConcertsForId: function (connecion, id, callback)
 	{
 		sql = "SELECT b.* FROM arrangement_concert a, concert b WHERE a.concert_id = b.id AND a.arrangement_id = "+id;
+		connection.query(sql, callback);
+	},
+
+	addConcertForId: function(connection, arrangement_id, concert_id, callback)
+	{
+		sql = "INSERT INTO arrangement_concert (arrangement_id, concert_id) VALUES("+connection.escape(arrangement_id)+", "+connection.escape(concert_id)+")";
+		connection.query(sql, callback);
+	},
+
+	deleteConcertForId: function(connection, arrangement_id, concert_id, callback)
+	{
+		sql = "DELETE FROM arrangement_concert WHERE concert_id = "+connection.escape(concert_id);
 		connection.query(sql, callback);
 	},
 
@@ -438,6 +474,18 @@ module.exports = {
 		connection.query(sql, callback);
 	},
 
+	addDirectorForId: function(connection, arrangement_id, director_id, callback)
+	{
+		sql = "INSERT INTO arrangement_director (arrangement_id, director_id) VALUES("+connection.escape(arrangement_id)+", "+connection.escape(director_id)+")";
+		connection.query(sql, callback);
+	},
+
+	deleteDirectorForId: function(connection, arrangement_id, director_id, callback)
+	{
+		sql = "DELETE FROM arrangement_director WHERE director_id = "+connection.escape(director_id);
+		connection.query(sql, callback);
+	},
+
 	/*
 	* Queries the database, returning all hangovers who soloed the arrangement with id "id"
 	* and passing them to callback(error, rows).
@@ -454,6 +502,18 @@ module.exports = {
 		connection.query(sql, callback);
 	},
 
+	addSoloistForId: function(connection, arrangement_id, soloist_id, callback)
+	{
+		sql = "INSERT INTO arrangement_soloist (arrangement_id, soloist_id) VALUES("+connection.escape(arrangement_id)+", "+connection.escape(soloist_id)+")";
+		connection.query(sql, callback);
+	},
+
+	deleteSoloistForId: function(connection, arrangement_id, soloist_id, callback)
+	{
+		sql = "DELETE FROM arrangement_soloist WHERE soloist_id = "+connection.escape(soloist_id);
+		connection.query(sql, callback);
+	},
+
 	/*
 	* Queries the database, returning all semesters when we performed the arrangement with id "id"
 	* and passing them to callback(error, rows).
@@ -467,6 +527,18 @@ module.exports = {
 	getSemestersForId: function (connecion, id, callback)
 	{
 		sql = "SELECT b.* FROM arrangement_semester a, semester b WHERE a.semester_id = b.id AND a.arrangement_id = "+id;
+		connection.query(sql, callback);
+	},
+
+	addSemesterForId: function(connection, arrangement_id, semester_id, callback)
+	{
+		sql = "INSERT INTO arrangement_semester (arrangement_id, semester_id) VALUES("+connection.escape(arrangement_id)+", "+connection.escape(semester_id)+")";
+		connection.query(sql, callback);
+	},
+
+	deleteSemesterForId: function(connection, arrangement_id, semester_id, callback)
+	{
+		sql = "DELETE FROM arrangement_semester WHERE semester_id = "+connection.escape(semester_id);
 		connection.query(sql, callback);
 	},
 
