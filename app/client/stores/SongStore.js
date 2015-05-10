@@ -17,12 +17,7 @@ var _songs = [],
  * @param {JSON}
  */
 function setSongs (newSongs) {
-  // alphabetize the names before setting them - TODO this'll go away when SQL sorts the names for us
-  _songs = newSongs.sort(function (a, b) {
-    var A = a.name.toLowerCase();
-    var B = b.name.toLowerCase();
-    if (A < B) {return -1;} else if (A > B) {return  1;} else {return 0;}
-  });
+  _songs = newSongs;
   _songsIDMap = {}
   _songs.forEach(function (song, index) {
     _songsIDMap[song.id] = index;
