@@ -66,9 +66,9 @@ var Animations = {
    */
   collapseUp: function (domNode) {
     return Velocity(domNode, {
-      'max-height': 0
+      'max-height': [0, domNode.clientHeight]
     }, {
-      duration: 400
+      duration: 100
     });
   }
 };
