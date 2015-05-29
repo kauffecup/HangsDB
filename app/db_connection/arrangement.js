@@ -361,7 +361,7 @@ module.exports = {
 		// The number of entries to skip before the first one we return
 		offset = pageSize*(pageNum-1)
 		sql = "SELECT arrangement.id, arrangement.name, artist.name AS artist_name FROM arrangement LEFT JOIN artist";
-		sql += " ON arrangement.artist_id = artist.id ORDER BY arrangement.name LIMIT "+pageSize+" OFFSET "+offset+"";;
+		sql += " ON arrangement.artist_id = artist.id ORDER BY arrangement.name LIMIT "+pageSize+" OFFSET "+offset+"";
 
 		connection.query(sql, callback);
 	},
