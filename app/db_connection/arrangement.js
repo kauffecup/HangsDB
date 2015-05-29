@@ -607,14 +607,14 @@ module.exports = {
 	setFieldsForId: function (connection, id, obj, callback)
 	{
 		sql = "UPDATE arrangement SET ";
-		sql2 = "" // Store fields to change in separate string to make commas easier
+		sql2 = ""; // Store fields to change in separate string to make commas easier
 		for (var key in obj)
 		{
 			if (obj.hasOwnProperty(key))
 			{
 				if(sql2) // Not first field, put a comma between the previous field and this one
 				{
-					sql2 += ", "
+					sql2 += ", ";
 				}
 				sql2 += key + " = " + connection.escape(obj[key]);
 			}
